@@ -9,7 +9,7 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
-  List<String> items = [];
+  List<Widget> items = [];
   bool isLoading = false;
   ScrollController _scrollController = ScrollController();
 
@@ -42,8 +42,8 @@ class _HomescreenState extends State<Homescreen> {
     });
 
     Future.delayed(Duration(seconds: 2), () {
-      List<String> newItems =
-          List.generate(10, (index) => 'User Name ${items.length + index + 1}');
+      List<Widget> newItems = List.generate(
+          10, (index) => Text('User Name ${items.length + index + 1}'));
       setState(() {
         items.addAll(newItems);
         isLoading = false;
@@ -55,44 +55,170 @@ class _HomescreenState extends State<Homescreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        flexibleSpace: Column(
-          children: [
-            Row(
-              children: [
-                CircleAvatar(),
-                Text("Charts"),
-                Spacer(),
-                Icon(Icons.camera_alt),
-                Icon(Icons.edit_rounded),
-              ],
-            ),
-          ],
+        backgroundColor: Colors.white,
+        flexibleSpace: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                  ),
+                  SizedBox(width: 12),
+                  Text(
+                    "Chats",
+                    style: TextStyle(
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "SfProDisplay"),
+                  ),
+                  Spacer(),
+                  CircleAvatar(
+                      backgroundColor: Colors.grey[100],
+                      child: Icon(Icons.camera_alt)),
+                  CircleAvatar(
+                      backgroundColor: Colors.grey[100],
+                      child: Icon(Icons.edit_rounded)),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
+      backgroundColor: Colors.white,
       body: Column(
         children: [
-          TextField(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Container(
+              height: 34,
+              child: TextField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(10)),
+                  hintText: 'Search',
+                  hintStyle:
+                      TextStyle(color: Colors.grey, fontFamily: "SfProDisplay"),
+                  prefixIcon: Icon(Icons.search_sharp, color: Colors.grey),
+                  filled: true,
+                  fillColor: Colors.grey[100],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 14),
           CarouselSlider(
             options: CarouselOptions(
                 height: 100.0,
                 enableInfiniteScroll: false,
                 viewportFraction: 0.2,
                 padEnds: false),
-            items: ["+", 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) {
-              return Builder(
-                builder: (BuildContext context) {
-                  return Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 20,
-                        child: Text(i.toString()),
-                      ),
-                      Text("name")
-                    ],
-                  );
-                },
-              );
-            }).toList(),
+            items: [
+              // List of widgets to include in the carousel
+              Column(
+                children: [
+                  CircleAvatar(
+                    backgroundColor: Colors.grey[100],
+                    radius: 20,
+                    child: Icon(Icons.add),
+                  ),
+                  SizedBox(height: 8),
+                  Text("Story"),
+                ],
+              ),
+              Column(
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.asset(
+                          "assets/images/ProfilePic.jpeg",
+                          fit: BoxFit.fill,
+                        )),
+                  ),
+                  SizedBox(height: 8),
+                  Text("User 1"),
+                ],
+              ),
+              Column(
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.asset(
+                          "assets/images/ProfilePic.jpeg",
+                          fit: BoxFit.fill,
+                        )),
+                  ),
+                  SizedBox(height: 8),
+                  Text("User 2"),
+                ],
+              ),
+              Column(
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.asset(
+                          "assets/images/ProfilePic.jpeg",
+                          fit: BoxFit.fill,
+                        )),
+                  ),
+                  SizedBox(height: 8),
+                  Text("User 3"),
+                ],
+              ),
+              Column(
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.asset(
+                          "assets/images/ProfilePic.jpeg",
+                          fit: BoxFit.fill,
+                        )),
+                  ),
+                  SizedBox(height: 8),
+                  Text("User 4"),
+                ],
+              ),
+              Column(
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.asset(
+                          "assets/images/ProfilePic.jpeg",
+                          fit: BoxFit.fill,
+                        )),
+                  ),
+                  SizedBox(height: 8),
+                  Text("User 5"),
+                ],
+              ),
+              Column(
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.asset(
+                          "assets/images/ProfilePic.jpeg",
+                          fit: BoxFit.fill,
+                        )),
+                  ),
+                  SizedBox(height: 8),
+                  Text("User 6"),
+                ],
+              ),
+            ],
           ),
           Expanded(
             child: ListView.builder(
@@ -109,7 +235,7 @@ class _HomescreenState extends State<Homescreen> {
                 }
                 return ListTile(
                   leading: CircleAvatar(),
-                  title: Text(items[index]),
+                  title: items[index],
                 );
               },
             ),
