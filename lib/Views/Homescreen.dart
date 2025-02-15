@@ -19,7 +19,7 @@ class _HomescreenState extends State<Homescreen> {
   List<Chat> chat = [];
   bool isLoading = false;
   ScrollController _scrollController = ScrollController();
-  int _selectedIndex = 0; // Track the selected button index
+  int _selectedIndex = 0; 
 
   List<Chat> realisticChatData = [
     Chat()
@@ -105,27 +105,27 @@ class _HomescreenState extends State<Homescreen> {
               color: _selectedIndex == 0 ? Colors.black : Colors.grey,
               onPressed: () {
                 setState(() {
-                  _selectedIndex = 0; // Update selected index
+                  _selectedIndex = 0;
                 });
               },
             ),
-            SizedBox(width: 50), // Add spacing between buttons
+            SizedBox(width: 50), 
             IconButton(
               icon: Icon(Icons.supervisor_account_rounded),
               color: _selectedIndex == 1 ? Colors.black : Colors.grey,
               onPressed: () {
                 setState(() {
-                  _selectedIndex = 1; // Update selected index
+                  _selectedIndex = 1; 
                 });
               },
             ),
-            SizedBox(width: 50), // Add spacing between buttons
+            SizedBox(width: 50),
             IconButton(
               icon: Icon(Icons.explore),
               color: _selectedIndex == 2 ? Colors.black : Colors.grey,
               onPressed: () {
                 setState(() {
-                  _selectedIndex = 2; // Update selected index
+                  _selectedIndex = 2;
                 });
               },
             ),
@@ -164,7 +164,7 @@ class _HomescreenState extends State<Homescreen> {
                     backgroundColor: Colors.grey[100],
                     child: Icon(Icons.camera_alt),
                   ),
-                  SizedBox(width: 8), // Add spacing between icons
+                  SizedBox(width: 8), 
                   CircleAvatar(
                     backgroundColor: Colors.grey[100],
                     child: Icon(Icons.edit_rounded),

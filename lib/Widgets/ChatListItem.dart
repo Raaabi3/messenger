@@ -5,7 +5,7 @@ import '../Models/Chat.dart';
 
 class ChatListItem extends StatelessWidget {
   final Chat chat;
-  final HomescreenController controller = HomescreenController(); // Create an instance of the controller
+  final HomescreenController controller = HomescreenController(); 
 
    ChatListItem({Key? key, required this.chat}) : super(key: key);
 
