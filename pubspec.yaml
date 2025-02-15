@@ -34,6 +34,7 @@ dependencies:
   carousel_slider: ^5.0.0
   font_awesome_flutter: ^10.8.0
   intl: ^0.20.2
+  modal_bottom_sheet: ^3.0.0
 
 dev_dependencies:
   flutter_test:

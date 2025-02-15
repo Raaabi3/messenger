@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../Controller/HomeController.dart';
+import '../Widgets/SendStatus.dart';
 import '../Models/Chat.dart';
 
 class ChatListItem extends StatelessWidget {
@@ -20,22 +21,26 @@ class ChatListItem extends StatelessWidget {
           ),
         ),
       ),
-      title: Text(chat.username!),
-      subtitle: Text(
-        "You: ${chat.lastmessage} • ${controller.formatTime(chat.time!)}",
-        //overflow: TextOverflow.ellipsis,
-      ),
-      trailing: chat.status!
-          ? Icon(
-              Icons.circle_outlined,
-              color: Colors.grey[500],
-              size: 20,
-            )
-          : Icon(
-              Icons.verified_outlined,
-              color: Colors.grey[500],
-              size: 20,
+      title: Text(chat.username!,style: TextStyle(fontFamily: "SfProDisplay" , fontWeight: FontWeight.bold),),
+      subtitle: Row(
+        children: [
+          Flexible(
+            child: Text(
+              "You: ${chat.lastmessage} • ",
+              style: TextStyle(fontFamily: "SfProDisplay" ,color: Colors.grey),
+
+              overflow: TextOverflow.ellipsis,
             ),
+          ),
+          Text(
+            controller.formatTime(chat.time!),
+                          style: TextStyle(fontFamily: "SfProDisplay" ,color: Colors.grey),
+
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+      trailing: Sendstatus(chat: chat),
     );
   }
 }
