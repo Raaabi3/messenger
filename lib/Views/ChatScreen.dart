@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../Controller/ChatController.dart';
 import '../Models/Conversation.dart';
 import '../Models/Chat.dart';
 import '../Models/Helpers/MessageItem .dart';
-import '../Widgets/MessageBubble.dart';  
+import '../Widgets/MessageBubble.dart';
 
 class Chatscreen extends StatefulWidget {
   final Chat chat;
@@ -15,70 +17,72 @@ class Chatscreen extends StatefulWidget {
 
 class _ChatscreenState extends State<Chatscreen> {
   List<MessageItem> messages = [];
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _loadMessages();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    });
   }
 
   void _loadMessages() {
-    final conversations = [
-      Conversation()
-        ..sentMessage = "Hey Sarah, are you on your way?"
-        ..sentMessageTime = DateTime(2025, 2, 15, 14, 0)
-        ..receivedMessage =
-            "Yes, but I'm stuck in traffic. Running 15 mins late!"
-        ..receivedMessageTime = DateTime(2025, 2, 15, 14, 10),
-      Conversation()
-        ..sentMessage = "No worries, take your time!"
-        ..sentMessageTime = DateTime(2025, 2, 15, 14, 15),
-      Conversation()
-        ..sentMessage = "Hey Michael, did you finish the designs?"
-        ..sentMessageTime = DateTime(2025, 2, 15, 12, 0)
-        ..receivedMessage =
-            "Yes, just sent them over. Let me know your thoughts!"
-        ..receivedMessageTime = DateTime(2025, 2, 15, 12, 15),
-      Conversation()
-        ..sentMessage = "blablabla?"
-        ..sentMessageTime = DateTime(2025, 2, 15, 12, 1)
-        ..receivedMessage = "Yes, blablabla"
-        ..receivedMessageTime = DateTime(2025, 2, 15, 12, 16),
-      Conversation()
-        ..sentMessage = "Hey Emma, are you free tomorrow for coffee?"
-        ..sentMessageTime = DateTime(2025, 2, 14, 18, 30)
-        ..receivedMessage = "Sure! 9am at Blue Bottle works for me."
-        ..receivedMessageTime = DateTime(2025, 2, 14, 18, 45),
-      Conversation()
-        ..sentMessage = "Hey David, did my package arrive?"
-        ..sentMessageTime = DateTime(2025, 2, 14, 9, 45)
-        ..receivedMessage = "Yes, it was delivered just now!"
-        ..receivedMessageTime = DateTime(2025, 2, 14, 10, 0),
-    ];
-
-
-    for (var conversation in conversations) {
-      if (conversation.sentMessageTime != null) {
-        messages.add(MessageItem(
-          text: conversation.sentMessage!,
-          time: conversation.sentMessageTime!,
-          isSent: true,
-        ));
-      }
-      if (conversation.receivedMessageTime != null) {
-        messages.add(MessageItem(
-          text: conversation.receivedMessage!,
-          time: conversation.receivedMessageTime!,
-          isSent: false,
-        ));
+    if (widget.chat.conversations != null) {
+      for (var conversation in widget.chat.conversations!) {
+        if (conversation.sentMessageTime != null) {
+          messages.add(MessageItem(
+            text: conversation.sentMessage!,
+            time: conversation.sentMessageTime!,
+            isSent: true,
+          ));
+        }
+        if (conversation.receivedMessageTime != null) {
+          messages.add(MessageItem(
+            text: conversation.receivedMessage!,
+            time: conversation.receivedMessageTime!,
+            isSent: false,
+          ));
+        }
       }
     }
 
     messages.sort((a, b) => a.time.compareTo(b.time));
   }
 
+  void _sendMessage(ChatController chatController) {
+    final text = chatController.textController.text.trim();
+    if (text.isNotEmpty) {
+      setState(() {
+        messages.add(MessageItem(
+          text: text,
+          time: DateTime.now(),
+          isSent: true,
+        ));
+        chatController.clearText();
+      });
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottom();
+      });
+    }
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final chatController = Provider.of<ChatController>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -139,44 +143,156 @@ class _ChatscreenState extends State<Chatscreen> {
           ],
         ),
       ),
-      body: ListView.builder(
-        itemCount: messages.length,
-        itemBuilder: (context, index) {
-          return MessageBubble(message: messages[index]);
-        },
-      ),
-      bottomNavigationBar: Row(
+      body: ListView(
+        controller: _scrollController,
         children: [
-          IconButton(
-              onPressed: () {}, icon: const Icon(Icons.add_circle_rounded)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.camera_alt)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.photo_outlined)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.mic)),
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                suffixIcon: IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.emoji_emotions),
-                ),
-                hintText: 'Message',
-                hintStyle: const TextStyle(
-                  color: Colors.grey,
-                  fontFamily: "SfProDisplay",
-                ),
-                filled: true,
-                fillColor: Colors.grey[100],
+          CircleAvatar(
+            radius: 50,
+            backgroundColor: Colors.grey,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image.asset(
+                "assets/images/ProfilePic.jpeg",
+                fit: BoxFit.fill,
               ),
             ),
           ),
-          IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.thumb_up_off_alt_rounded)),
+          const SizedBox(height: 10),
+          Text(
+            widget.chat.username.toString(),
+            style: const TextStyle(
+              fontFamily: "SfProDisplay",
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 5),
+          const Text(
+            "You're friends on Facebook",
+            style: TextStyle(
+              fontFamily: "SfProDisplay",
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
+          Center(
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Positioned(
+                  child: CircleAvatar(
+                    radius: 30,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.asset(
+                        "assets/images/ProfilePic.jpeg",
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 40,
+                  child: CircleAvatar(
+                    radius: 30,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.asset(
+                        "assets/images/ProfilePic.jpeg",
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Text(
+            "Say hi to your new Facebook friend, ${widget.chat.username}",
+            style: TextStyle(
+              fontFamily: "SfProDisplay",
+              fontSize: 12,
+              color: Colors.grey[300],
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 180),
+
+          ...messages.map((message) => MessageBubble(message: message)).toList(),
         ],
+      ),
+      bottomNavigationBar: Consumer<ChatController>(
+        builder: (context, chatController, child) {
+          return Row(
+            children: [
+              if (chatController.typing)
+                IconButton(
+                  onPressed: () {
+                    chatController.setTyping(false);
+                  },
+                  icon: const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 20,
+                  ),
+                ),
+              if (!chatController.typing)
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.add_circle_rounded),
+                ),
+              if (!chatController.typing)
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.camera_alt),
+                ),
+              if (!chatController.typing)
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.photo_outlined),
+                ),
+              if (!chatController.typing)
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.mic),
+                ),
+              Expanded(
+                child: TextField(
+                  controller: chatController.textController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    suffixIcon: IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.emoji_emotions),
+                    ),
+                    hintText: 'Message',
+                    hintStyle: const TextStyle(
+                      color: Colors.grey,
+                      fontFamily: "SfProDisplay",
+                    ),
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                  ),
+                  onTap: () {
+                    chatController.setTyping(true);
+                  },
+                  onSubmitted: (text) {
+                    _sendMessage(chatController);
+                    chatController.setTyping(false);
+                  },
+                ),
+              ),
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(Icons.thumb_up_off_alt_rounded),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

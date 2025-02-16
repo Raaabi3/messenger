@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:messenger/Views/Homescreen.dart';
+import 'package:provider/provider.dart';
+
+import 'Controller/ChatController.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (context) => ChatController(),
+      child: MaterialApp(home: Homescreen())));
 }
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: const Homescreen(),
-    );
-  }
-}
-

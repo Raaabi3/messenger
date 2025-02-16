@@ -6,91 +6,54 @@ class MessageAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10),
-      child: Column(
+      padding: const EdgeInsets.symmetric(vertical: 15.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Row(
+          Column(
             children: [
               IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.delete_outline_rounded),
+                icon: Icon(Icons.reply),
                 iconSize: 30,
+                color: Colors.purple[300],
               ),
-              Text("Archive"),
+              Text("Reply"),
             ],
           ),
-          Row(
+          Column(
             children: [
               IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.do_disturb_off_sharp),
+                icon: Icon(Icons.copy),
                 iconSize: 30,
+                color: Colors.purple[300],
               ),
-              Text("Ignore"),
+              Text("Copy"),
             ],
           ),
-          Row(
+          Column(
             children: [
               IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.person_add),
+                icon: Icon(Icons.push_pin),
                 iconSize: 30,
+                color: Colors.purple[300],
               ),
-              Text("Add members"),
+              Text("Pin"),
             ],
           ),
-          Row(
+          Column(
             children: [
               IconButton(
                 onPressed: () {},
-                icon: Icon(Icons.notifications),
+                icon: Icon(Icons.menu),
                 iconSize: 30,
+                color: Colors.purple[300],
               ),
-              Text("Unmute"),
+              Text("More"),
             ],
           ),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.bubble_chart_rounded),
-                iconSize: 30,
-              ),
-              Text("Open chat head"),
-            ],
-          ),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.drafts_outlined),
-                iconSize: 30,
-              ),
-              Text("Mark as read"),
-            ],
-          ),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.exit_to_app_rounded),
-                color: Colors.red,
-                iconSize: 30,
-              ),
-              Text("Leave group"),
-            ],
-          ),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.delete),
-                color: Colors.red,
-                iconSize: 30,
-              ),
-              Text("Delete"),
-            ],
-          )
         ],
       ),
     );

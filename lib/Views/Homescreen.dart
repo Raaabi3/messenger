@@ -4,9 +4,10 @@ import 'package:messenger/Views/ChatScreen.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../Models/Chat.dart';
+import '../Models/Conversation.dart';
 import '../Widgets/CarouselItem.dart';
 import '../Widgets/ChatListItem.dart';
-import '../Widgets/MessageAction.dart';
+import '../Widgets/ConversationAction.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -22,39 +23,79 @@ class _HomescreenState extends State<Homescreen> {
   int _selectedIndex = 0; 
 
   List<Chat> realisticChatData = [
-    Chat()
-      ..image = "assets/images/ProfilePic.jpeg"
-      ..username = 'Sarah Johnson'
-      ..lastmessage = 'Running 15 mins late, traffic is crazy! 🚗'
-      ..status = true
-      ..received = true
-      ..read = true
-      ..time = DateTime(2025, 2, 15, 14, 30),
-    Chat()
-      ..image = "assets/images/ProfilePic.jpeg"
-      ..username = 'Michael Chen'
-      ..lastmessage = 'Just sent the design mockups 📎'
-      ..status = false
-      ..received = false
-      ..read = false
-      ..time = DateTime(2025, 2, 15, 12, 15),
-    Chat()
-      ..image = "assets/images/ProfilePic.jpeg"
-      ..username = 'Emma Wilson'
-      ..lastmessage = 'Coffee tomorrow? 9am at Blue Bottle? ☕'
-      ..status = true
-      ..read = false
-      ..received = true
-      ..time = DateTime(2025, 2, 14, 18, 45),
-    Chat()
-      ..image = "assets/images/ProfilePic.jpeg"
-      ..username = 'David Miller'
-      ..read = true
-      ..lastmessage = 'Your package was delivered 📦'
-      ..status = false
-      ..received = true
-      ..time = DateTime(2025, 2, 14, 10, 0),
-  ];
+  Chat(
+    image: "assets/images/ProfilePic.jpeg",
+    username: 'Sarah Johnson',
+    lastmessage: 'Running 15 mins late, traffic is crazy! 🚗',
+    status: true,
+    received: true,
+    read: true,
+    time: DateTime(2025, 2, 15, 14, 30),
+    conversations: [
+      Conversation(
+        sentMessage: "Hey Sarah, are you on your way?",
+        sentMessageTime: DateTime(2025, 2, 15, 14, 0),
+        receivedMessage: "Yes, but I'm stuck in traffic. Running 15 mins late!",
+        receivedMessageTime: DateTime(2025, 2, 15, 14, 10),
+      ),
+      Conversation(
+        sentMessage: "No worries, take your time!",
+        sentMessageTime: DateTime(2025, 2, 15, 14, 15),
+      ),
+    ],
+  ),
+  Chat(
+    image: "assets/images/ProfilePic.jpeg",
+    username: 'Michael Chen',
+    lastmessage: 'Just sent the design mockups 📎',
+    status: false,
+    received: false,
+    read: false,
+    time: DateTime(2025, 2, 15, 12, 15),
+    conversations: [
+      Conversation(
+        sentMessage: "Hey Michael, did you finish the designs?",
+        sentMessageTime: DateTime(2025, 2, 15, 12, 0),
+        receivedMessage: "Yes, just sent them over. Let me know your thoughts!",
+        receivedMessageTime: DateTime(2025, 2, 15, 12, 15),
+      ),
+    ],
+  ),
+  Chat(
+    image: "assets/images/ProfilePic.jpeg",
+    username: 'Emma Wilson',
+    lastmessage: 'Coffee tomorrow? 9am at Blue Bottle? ☕',
+    status: true,
+    read: false,
+    received: true,
+    time: DateTime(2025, 2, 14, 18, 45),
+    conversations: [
+      Conversation(
+        sentMessage: "Hey Emma, are you free tomorrow for coffee?",
+        sentMessageTime: DateTime(2025, 2, 14, 18, 30),
+        receivedMessage: "Sure! 9am at Blue Bottle works for me.",
+        receivedMessageTime: DateTime(2025, 2, 14, 18, 45),
+      ),
+    ],
+  ),
+  Chat(
+    image: "assets/images/ProfilePic.jpeg",
+    username: 'David Miller',
+    read: true,
+    lastmessage: 'Your package was delivered 📦',
+    status: false,
+    received: true,
+    time: DateTime(2025, 2, 14, 10, 0),
+    conversations: [
+      Conversation(
+        sentMessage: "Hey David, did my package arrive?",
+        sentMessageTime: DateTime(2025, 2, 14, 9, 45),
+        receivedMessage: "Yes, it was delivered just now!",
+        receivedMessageTime: DateTime(2025, 2, 14, 10, 0),
+      ),
+    ],
+  ),
+];
 
   @override
   void initState() {
@@ -256,7 +297,7 @@ class _HomescreenState extends State<Homescreen> {
                       showBarModalBottomSheet(
                         context: context,
                         builder: (context) =>
-                            Container(height: 450, child: MessageAction()),
+                            Container(height: 450, child: ConversationAction()),
                       );
                     },
                     onTap: () {
