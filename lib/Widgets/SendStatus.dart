@@ -10,8 +10,8 @@ class Sendstatus extends StatelessWidget {
   Widget build(BuildContext context) {
     return chat.received!
         ? chat.read!
-            ? Icon(Icons.verified,color: Colors.blueAccent ,size: 20,)
-            : Icon(Icons.verified_outlined,color: Colors.grey,size: 20)
+            ? Icon(Icons.check_circle,color: Colors.blueAccent ,size: 20,)
+            : Icon(Icons.check_circle_outline,color: Colors.grey,size: 20)
         : Icon(Icons.circle_outlined ,color: Colors.grey,size: 20);
   }
 }

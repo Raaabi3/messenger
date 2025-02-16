@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:messenger/Views/ChatProfileScreen.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import '../Controller/ChatController.dart';
 import '../Models/Conversation.dart';
@@ -139,7 +141,12 @@ class _ChatscreenState extends State<Chatscreen> {
             const Spacer(),
             IconButton(onPressed: () {}, icon: const Icon(Icons.call)),
             IconButton(onPressed: () {}, icon: const Icon(Icons.videocam)),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.info_rounded)),
+            IconButton(onPressed: () {
+               Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => Chatprofilescreen()),
+                      );
+            }, icon: const Icon(Icons.info_rounded)),
           ],
         ),
       ),
@@ -219,8 +226,9 @@ class _ChatscreenState extends State<Chatscreen> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 180),
-
-          ...messages.map((message) => MessageBubble(message: message)).toList(),
+          ...messages
+              .map((message) => MessageBubble(message: message))
+              .toList(),
         ],
       ),
       bottomNavigationBar: Consumer<ChatController>(
@@ -263,10 +271,48 @@ class _ChatscreenState extends State<Chatscreen> {
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     suffixIcon: IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled:
+                              true, // Allows the sheet to expand and push content up
+                          backgroundColor: Colors
+                              .transparent, // Optional: For a transparent background
+                          builder: (context) {
+                            return DraggableScrollableSheet(
+                              initialChildSize:
+                                  0.5, // Initial size (50% of the screen)
+                              minChildSize: 0.25, // Minimum size when collapsed
+                              maxChildSize:
+                                  0.9, // Maximum size (90% of the screen)
+                              builder: (context, scrollController) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(16)),
+                                  ),
+                                  child: ListView(
+                                    controller: scrollController,
+                                    children: [
+                                      Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(16.0),
+                                          child: Text("Drag me up!"),
+                                        ),
+                                      ),
+                                      // Add more widgets here
+                                    ],
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        );
+                      },
                       icon: const Icon(Icons.emoji_emotions),
                     ),
                     hintText: 'Message',
@@ -277,6 +323,13 @@ class _ChatscreenState extends State<Chatscreen> {
                     filled: true,
                     fillColor: Colors.grey[100],
                   ),
+                  onChanged: (text) {
+                    if (text.isEmpty) {
+                      chatController.setTyping(false);
+                    } else {
+                      chatController.setTyping(true);
+                    }
+                  },
                   onTap: () {
                     chatController.setTyping(true);
                   },
@@ -286,10 +339,18 @@ class _ChatscreenState extends State<Chatscreen> {
                   },
                 ),
               ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.thumb_up_off_alt_rounded),
-              ),
+              !chatController.typing
+                  ? IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.thumb_up_off_alt_rounded),
+                    )
+                  : IconButton(
+                      onPressed: () {
+                        _sendMessage(chatController);
+                        chatController.setTyping(false);
+                      },
+                      icon: const Icon(Icons.send),
+                    )
             ],
           );
         },
