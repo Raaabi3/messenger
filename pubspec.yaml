@@ -36,6 +36,7 @@ dependencies:
   intl: ^0.20.2
   modal_bottom_sheet: ^3.0.0
   provider: ^6.1.2
+  shared_preferences: ^2.5.2
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +65,13 @@ flutter:
   assets:
     - assets/images/ProfilePic.jpeg
     - assets/images/noAvatar.jpg
+    - assets/images/1.jpg
+    - assets/images/2.jpg
+    - assets/images/3.jpg
+    - assets/images/4.jpg
+    - assets/images/me.jpg
+
+
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

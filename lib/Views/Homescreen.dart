@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../Controller/HomeController.dart';
+import '../Controller/ThemeProvider.dart';
 import '../Models/Chat.dart';
 import '../Models/Conversation.dart';
 import '../Widgets/CarouselItem.dart';
@@ -23,6 +26,13 @@ class _HomescreenState extends State<Homescreen> {
   ScrollController _scrollController = ScrollController();
   int _selectedIndex = 0;
 
+  Map<int, String> imageslist = {
+    1: "Aya zitouna",
+    2: "Salima azzi",
+    3: "Angel Garvin",
+    4: "Islam Mansouri"
+  };
+
   @override
   void initState() {
     super.initState();
@@ -37,7 +47,8 @@ class _HomescreenState extends State<Homescreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       _loadMoreItems();
     }
@@ -51,7 +62,8 @@ class _HomescreenState extends State<Homescreen> {
     });
 
     Future.delayed(Duration(seconds: 2), () {
-      final homeController = Provider.of<HomescreenController>(context, listen: false);
+      final homeController =
+          Provider.of<HomescreenController>(context, listen: false);
       homeController.addChats([
         Chat(
           image: "assets/images/ProfilePic.jpeg",
@@ -66,7 +78,8 @@ class _HomescreenState extends State<Homescreen> {
             Conversation(
               sentMessage: "Hey Sarah, are you on your way?",
               sentMessageTime: DateTime(2025, 2, 15, 14, 0),
-              receivedMessage: "Yes, but I'm stuck in traffic. Running 15 mins late!",
+              receivedMessage:
+                  "Yes, but I'm stuck in traffic. Running 15 mins late!",
               receivedMessageTime: DateTime(2025, 2, 15, 14, 10),
             ),
             Conversation(
@@ -85,113 +98,141 @@ class _HomescreenState extends State<Homescreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
     final homeController = Provider.of<HomescreenController>(context);
 
     return Scaffold(
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            IconButton(
-              icon: Icon(Icons.chat_bubble_rounded),
-              color: _selectedIndex == 0 ? Colors.black : Colors.grey,
-              onPressed: () {
-                setState(() {
-                  _selectedIndex = 0;
-                });
-              },
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.chat_bubble_rounded,
+                  ),
+                  color: _selectedIndex == 0 ? Colors.blue : Colors.grey,
+                  onPressed: () {
+                    setState(() {
+                      _selectedIndex = 0;
+                    });
+                  },
+                ),
+                Text(
+                  "Chats",
+                  style: TextStyle(
+                      fontFamily: "SfProDisplay",
+                      fontSize: 11,
+                      color: _selectedIndex == 0 ? Colors.blue : Colors.grey),
+                )
+              ],
             ),
             SizedBox(width: 50),
-            IconButton(
-              icon: Icon(Icons.supervisor_account_rounded),
-              color: _selectedIndex == 1 ? Colors.black : Colors.grey,
-              onPressed: () {
-                setState(() {
-                  _selectedIndex = 1;
-                });
-              },
-            ),
-            SizedBox(width: 50),
-            IconButton(
-              icon: Icon(Icons.explore),
-              color: _selectedIndex == 2 ? Colors.black : Colors.grey,
-              onPressed: () {
-                setState(() {
-                  _selectedIndex = 2;
-                });
-              },
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.web_stories),
+                  color: _selectedIndex == 2 ? Colors.blue : Colors.grey,
+                  onPressed: () {
+                    setState(() {
+                      _selectedIndex = 2;
+                    });
+                  },
+                ),
+                Text(
+                  "Stories",
+                  style: TextStyle(
+                      fontFamily: "SfProDisplay",
+                      fontSize: 11,
+                      color: _selectedIndex == 2 ? Colors.blue : Colors.grey),
+                )
+              ],
             ),
           ],
         ),
       ),
       floatingActionButton: homeController.addconv
-          ? FloatingActionButton(
-              mini: true,
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => CustomDialog(),
-                );
-              },
-              child: Icon(Icons.add),
+          ? Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  mini: true,
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => CustomDialog(),
+                    );
+                  },
+                  child: Icon(Icons.add),
+                ),
+                Switch(
+                  value: themeProvider.themeMode == ThemeMode.dark,
+                  onChanged: (value) => themeProvider.toggleTheme(),
+                ),
+              ],
             )
           : null,
+          drawer: Drawer(
+        
+      ),
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.white,
-        flexibleSpace: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(
-                children: [
-                  IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      "Chats",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: "SfProDisplay",
-                      ),
-                    ),
-                  ),
-                  CircleAvatar(
-                    backgroundColor: Colors.grey[100],
-                    child: Icon(Icons.edit_rounded),
-                  ),
-                ],
+        leading: Builder(
+          builder: (context) {
+            return Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: IconButton.filled(
+                onPressed: () {
+                  Scaffold.of(context).openDrawer(); 
+                },
+                icon: Icon(
+                  Icons.menu,
+                ),
               ),
-            ],
-          ),
+            );
+          },
+        ),
+        title: Row(
+          children: [
+            Text(
+              "Chats",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                fontFamily: "SfProDisplay",
+              ),
+            ),
+            Spacer(),
+            IconButton.filled(onPressed: () {}, icon: Icon(Icons.edit_rounded)),
+          ],
         ),
       ),
-      backgroundColor: Colors.white,
       body: GestureDetector(
         onDoubleTap: homeController.setconv,
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
               child: Container(
-                height: 34,
+                height: 30,
                 child: TextField(
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     hintText: 'Search',
+                    maintainHintHeight: true,
                     hintStyle: TextStyle(
                       color: Colors.grey,
                       fontFamily: "SfProDisplay",
                     ),
                     prefixIcon: Icon(Icons.search_sharp, color: Colors.grey),
                     filled: true,
-                    fillColor: Colors.grey[100],
                   ),
                 ),
               ),
@@ -208,26 +249,28 @@ class _HomescreenState extends State<Homescreen> {
                 Column(
                   children: [
                     CircleAvatar(
-                      backgroundColor: Colors.grey[100],
-                      radius: 30,
-                      child: Icon(
-                        Icons.add,
-                        color: Colors.black,
-                      ),
-                    ),
+                                  radius: 30,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(30),
+                                    child: Image.asset(
+                                      "assets/images/me.jpg",
+                                      fit: BoxFit.fitWidth,
+                                    ),
+                                  ),
+                                ),
                     SizedBox(height: 8),
                     Text(
-                      "Story",
+                      "Your Note",
                       style: TextStyle(
-                          fontFamily: "SfProDisplay", color: Colors.grey),
+                          fontFamily: "SfProDisplay", color: Colors.grey[700]),
                     ),
                   ],
                 ),
                 ...List.generate(
                   6,
                   (index) => CarouselItem(
-                    imagePath: "assets/images/ProfilePic.jpeg",
-                    label: "User ${index + 1}",
+                    imagePath: "assets/images/${index + 1}.jpg",
+                    label: "${imageslist[index + 1]?.split(" ")[0]}",
                   ),
                 ),
               ],
@@ -237,7 +280,8 @@ class _HomescreenState extends State<Homescreen> {
                 builder: (context, homeController, child) {
                   return ListView.builder(
                     controller: _scrollController,
-                    itemCount: homeController.chats.length + (isLoading ? 1 : 0),
+                    itemCount:
+                        homeController.chats.length + (isLoading ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == homeController.chats.length) {
                         return Center(
@@ -269,7 +313,8 @@ class _HomescreenState extends State<Homescreen> {
                                       )),
                             );
                           },
-                          child: ChatListItem(chat: homeController.chats[index]),
+                          child:
+                              ChatListItem(chat: homeController.chats[index]),
                         ),
                       );
                     },

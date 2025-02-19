@@ -105,7 +105,6 @@ class _ChatscreenState extends State<Chatscreen> {
                   right: 0,
                   child: CircleAvatar(
                     radius: 7,
-                    backgroundColor: Colors.white,
                     child: CircleAvatar(
                       backgroundColor: Colors.green[400],
                       radius: 5,
@@ -291,7 +290,6 @@ class _ChatscreenState extends State<Chatscreen> {
                               builder: (context, scrollController) {
                                 return Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
                                     borderRadius: BorderRadius.vertical(
                                         top: Radius.circular(16)),
                                   ),

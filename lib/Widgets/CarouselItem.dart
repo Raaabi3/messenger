@@ -19,7 +19,7 @@ class CarouselItem extends StatelessWidget {
             CircleAvatar(
               radius: 30,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(30),
                 child: Image.asset(
                   imagePath,
                   fit: BoxFit.fill,
@@ -31,9 +31,8 @@ class CarouselItem extends StatelessWidget {
                 right: 0,
                 child: CircleAvatar(
                   radius: 7,
-                  backgroundColor: Colors.white,
                   child: CircleAvatar(
-                    backgroundColor: Colors.green[400],
+                    backgroundColor: const Color.fromARGB(255, 26, 187, 34),
                     radius: 5,
                   ),
                 ))

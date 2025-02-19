@@ -27,12 +27,12 @@ class ChatListItem extends StatelessWidget {
           chat.lastSeenTime != DateTime.now &&
                   (DateTime.now().difference(chat.lastSeenTime!).inMinutes < 60)
               ? Positioned(
-                  bottom: -2,
-                  right: -2,
+                  bottom: 0,
+                  right: 0,
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      border: Border.all(color: Colors.white,width:2),
+                      border: Border.all( width:2),
                       color: const Color.fromARGB(255, 35, 65, 36)
                     ),
                     child: Padding(
@@ -52,7 +52,6 @@ class ChatListItem extends StatelessWidget {
                   right: -2,
                   child: CircleAvatar(
                     radius: 8,
-                    backgroundColor: Colors.white,
                     child: CircleAvatar(
                       backgroundColor: const Color.fromARGB(255, 31, 177, 35),
                       radius: 6,

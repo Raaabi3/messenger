@@ -73,7 +73,7 @@ class _CustomDialogState extends State<CustomDialog> {
             borderRadius: BorderRadius.circular(10),
             color: Colors.grey.shade300,
           ),
-          child: Icon(Icons.add, color: Colors.black54),
+          child: Icon(Icons.add),
         ),
         SizedBox(width: 10),
         Text("User Avatar", style: TextStyle(fontSize: 16)),
