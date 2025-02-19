@@ -9,6 +9,8 @@ class Chat {
   bool? read;
   DateTime? time;
   List<Conversation>? conversations;
+  DateTime? lastSeenTime;
+  bool mute = false;
 
   Chat({
     this.image,
@@ -19,5 +21,6 @@ class Chat {
     this.read,
     this.time,
     this.conversations,
+    this.lastSeenTime,
   });
 }

@@ -1,13 +1,15 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:messenger/Views/ChatScreen.dart';
+import 'package:provider/provider.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-
+import '../Controller/HomeController.dart';
 import '../Models/Chat.dart';
 import '../Models/Conversation.dart';
 import '../Widgets/CarouselItem.dart';
 import '../Widgets/ChatListItem.dart';
 import '../Widgets/ConversationAction.dart';
+import '../Widgets/CustomDialog.dart';
+import '../Views/ChatScreen.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -17,85 +19,9 @@ class Homescreen extends StatefulWidget {
 }
 
 class _HomescreenState extends State<Homescreen> {
-  List<Chat> chat = [];
   bool isLoading = false;
   ScrollController _scrollController = ScrollController();
-  int _selectedIndex = 0; 
-
-  List<Chat> realisticChatData = [
-  Chat(
-    image: "assets/images/ProfilePic.jpeg",
-    username: 'Sarah Johnson',
-    lastmessage: 'Running 15 mins late, traffic is crazy! 🚗',
-    status: true,
-    received: true,
-    read: true,
-    time: DateTime(2025, 2, 15, 14, 30),
-    conversations: [
-      Conversation(
-        sentMessage: "Hey Sarah, are you on your way?",
-        sentMessageTime: DateTime(2025, 2, 15, 14, 0),
-        receivedMessage: "Yes, but I'm stuck in traffic. Running 15 mins late!",
-        receivedMessageTime: DateTime(2025, 2, 15, 14, 10),
-      ),
-      Conversation(
-        sentMessage: "No worries, take your time!",
-        sentMessageTime: DateTime(2025, 2, 15, 14, 15),
-      ),
-    ],
-  ),
-  Chat(
-    image: "assets/images/ProfilePic.jpeg",
-    username: 'Michael Chen',
-    lastmessage: 'Just sent the design mockups 📎',
-    status: false,
-    received: false,
-    read: false,
-    time: DateTime(2025, 2, 15, 12, 15),
-    conversations: [
-      Conversation(
-        sentMessage: "Hey Michael, did you finish the designs?",
-        sentMessageTime: DateTime(2025, 2, 15, 12, 0),
-        receivedMessage: "Yes, just sent them over. Let me know your thoughts!",
-        receivedMessageTime: DateTime(2025, 2, 15, 12, 15),
-      ),
-    ],
-  ),
-  Chat(
-    image: "assets/images/ProfilePic.jpeg",
-    username: 'Emma Wilson',
-    lastmessage: 'Coffee tomorrow? 9am at Blue Bottle? ☕',
-    status: true,
-    read: false,
-    received: true,
-    time: DateTime(2025, 2, 14, 18, 45),
-    conversations: [
-      Conversation(
-        sentMessage: "Hey Emma, are you free tomorrow for coffee?",
-        sentMessageTime: DateTime(2025, 2, 14, 18, 30),
-        receivedMessage: "Sure! 9am at Blue Bottle works for me.",
-        receivedMessageTime: DateTime(2025, 2, 14, 18, 45),
-      ),
-    ],
-  ),
-  Chat(
-    image: "assets/images/ProfilePic.jpeg",
-    username: 'David Miller',
-    read: true,
-    lastmessage: 'Your package was delivered 📦',
-    status: false,
-    received: true,
-    time: DateTime(2025, 2, 14, 10, 0),
-    conversations: [
-      Conversation(
-        sentMessage: "Hey David, did my package arrive?",
-        sentMessageTime: DateTime(2025, 2, 14, 9, 45),
-        receivedMessage: "Yes, it was delivered just now!",
-        receivedMessageTime: DateTime(2025, 2, 14, 10, 0),
-      ),
-    ],
-  ),
-];
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -111,8 +37,7 @@ class _HomescreenState extends State<Homescreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
+    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
       _loadMoreItems();
     }
@@ -126,8 +51,33 @@ class _HomescreenState extends State<Homescreen> {
     });
 
     Future.delayed(Duration(seconds: 2), () {
+      final homeController = Provider.of<HomescreenController>(context, listen: false);
+      homeController.addChats([
+        Chat(
+          image: "assets/images/ProfilePic.jpeg",
+          username: 'Sarah Johnson',
+          lastmessage: 'Running 15 mins late, traffic is crazy! 🚗',
+          lastSeenTime: DateTime.now().subtract(Duration(minutes: 15)),
+          status: true,
+          received: true,
+          read: true,
+          time: DateTime(2025, 2, 15, 14, 30),
+          conversations: [
+            Conversation(
+              sentMessage: "Hey Sarah, are you on your way?",
+              sentMessageTime: DateTime(2025, 2, 15, 14, 0),
+              receivedMessage: "Yes, but I'm stuck in traffic. Running 15 mins late!",
+              receivedMessageTime: DateTime(2025, 2, 15, 14, 10),
+            ),
+            Conversation(
+              sentMessage: "No worries, take your time!",
+              sentMessageTime: DateTime(2025, 2, 15, 14, 15),
+            ),
+          ],
+        ),
+        // Add more chats as needed
+      ]);
       setState(() {
-        chat.addAll(realisticChatData);
         isLoading = false;
       });
     });
@@ -135,6 +85,8 @@ class _HomescreenState extends State<Homescreen> {
 
   @override
   Widget build(BuildContext context) {
+    final homeController = Provider.of<HomescreenController>(context);
+
     return Scaffold(
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -150,13 +102,13 @@ class _HomescreenState extends State<Homescreen> {
                 });
               },
             ),
-            SizedBox(width: 50), 
+            SizedBox(width: 50),
             IconButton(
               icon: Icon(Icons.supervisor_account_rounded),
               color: _selectedIndex == 1 ? Colors.black : Colors.grey,
               onPressed: () {
                 setState(() {
-                  _selectedIndex = 1; 
+                  _selectedIndex = 1;
                 });
               },
             ),
@@ -173,6 +125,18 @@ class _HomescreenState extends State<Homescreen> {
           ],
         ),
       ),
+      floatingActionButton: homeController.addconv
+          ? FloatingActionButton(
+              mini: true,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => CustomDialog(),
+                );
+              },
+              child: Icon(Icons.add),
+            )
+          : null,
       appBar: AppBar(
         backgroundColor: Colors.white,
         foregroundColor: Colors.white,
@@ -183,29 +147,18 @@ class _HomescreenState extends State<Homescreen> {
             children: [
               Row(
                 children: [
-                  CircleAvatar(
-                    radius: 20,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: Image.asset("assets/images/ProfilePic.jpeg"),
-                    ),
-                  ),
+                  IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
                   SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       "Chats",
                       style: TextStyle(
-                        fontSize: 30,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         fontFamily: "SfProDisplay",
                       ),
                     ),
                   ),
-                  CircleAvatar(
-                    backgroundColor: Colors.grey[100],
-                    child: Icon(Icons.camera_alt),
-                  ),
-                  SizedBox(width: 8), 
                   CircleAvatar(
                     backgroundColor: Colors.grey[100],
                     child: Icon(Icons.edit_rounded),
@@ -217,102 +170,115 @@ class _HomescreenState extends State<Homescreen> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-            child: Container(
-              height: 34,
-              child: TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide.none,
-                    borderRadius: BorderRadius.circular(10),
+      body: GestureDetector(
+        onDoubleTap: homeController.setconv,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+              child: Container(
+                height: 34,
+                child: TextField(
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    hintText: 'Search',
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
+                      fontFamily: "SfProDisplay",
+                    ),
+                    prefixIcon: Icon(Icons.search_sharp, color: Colors.grey),
+                    filled: true,
+                    fillColor: Colors.grey[100],
                   ),
-                  hintText: 'Search',
-                  hintStyle: TextStyle(
-                    color: Colors.grey,
-                    fontFamily: "SfProDisplay",
-                  ),
-                  prefixIcon: Icon(Icons.search_sharp, color: Colors.grey),
-                  filled: true,
-                  fillColor: Colors.grey[100],
                 ),
               ),
             ),
-          ),
-          SizedBox(height: 14),
-          CarouselSlider(
-            options: CarouselOptions(
-              height: 100.0,
-              enableInfiniteScroll: false,
-              viewportFraction: 0.2,
-              padEnds: false,
-            ),
-            items: [
-              Column(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.grey[100],
-                    radius: 20,
-                    child: Icon(
-                      Icons.add,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    "Story",
-                    style: TextStyle(
-                        fontFamily: "SfProDisplay", color: Colors.grey),
-                  ),
-                ],
+            SizedBox(height: 14),
+            CarouselSlider(
+              options: CarouselOptions(
+                height: 100.0,
+                enableInfiniteScroll: false,
+                viewportFraction: 0.2,
+                padEnds: false,
               ),
-              ...List.generate(
-                6,
-                (index) => CarouselItem(
-                  imagePath: "assets/images/ProfilePic.jpeg",
-                  label: "User ${index + 1}",
+              items: [
+                Column(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.grey[100],
+                      radius: 30,
+                      child: Icon(
+                        Icons.add,
+                        color: Colors.black,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "Story",
+                      style: TextStyle(
+                          fontFamily: "SfProDisplay", color: Colors.grey),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              itemCount: chat.length + (isLoading ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == chat.length) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: CircularProgressIndicator(),
-                    ),
+                ...List.generate(
+                  6,
+                  (index) => CarouselItem(
+                    imagePath: "assets/images/ProfilePic.jpeg",
+                    label: "User ${index + 1}",
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: Consumer<HomescreenController>(
+                builder: (context, homeController, child) {
+                  return ListView.builder(
+                    controller: _scrollController,
+                    itemCount: homeController.chats.length + (isLoading ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (index == homeController.chats.length) {
+                        return Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 5.0),
+                        child: GestureDetector(
+                          onLongPress: () {
+                            showBarModalBottomSheet(
+                              context: context,
+                              builder: (context) => Container(
+                                  height: 450,
+                                  child: ConversationAction(
+                                    chat: homeController.chats[index],
+                                  )),
+                            );
+                          },
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Chatscreen(
+                                        chat: homeController.chats[index],
+                                      )),
+                            );
+                          },
+                          child: ChatListItem(chat: homeController.chats[index]),
+                        ),
+                      );
+                    },
                   );
-                }
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 5.0),
-                  child: GestureDetector(
-                    onLongPress: () {
-                      showBarModalBottomSheet(
-                        context: context,
-                        builder: (context) =>
-                            Container(height: 450, child: ConversationAction()),
-                      );
-                    },
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Chatscreen(chat: chat[index],)),
-                      );
-                    },
-                    child: ChatListItem(chat: chat[index]),
-                  ),
-                );
-              },
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

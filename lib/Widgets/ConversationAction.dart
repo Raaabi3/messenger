@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:messenger/Models/Chat.dart';
 
-class ConversationAction extends StatelessWidget {
-  const ConversationAction({super.key});
+class ConversationAction extends StatefulWidget {
+  final Chat chat;
+  const ConversationAction({super.key, required this.chat});
 
+  @override
+  State<ConversationAction> createState() => _ConversationActionState();
+}
+
+class _ConversationActionState extends State<ConversationAction> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -42,8 +49,14 @@ class ConversationAction extends StatelessWidget {
           Row(
             children: [
               IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.notifications),
+                onPressed: () {
+                  setState(() {
+                    widget.chat.mute = !widget.chat.mute;
+                  });
+                },
+                icon: widget.chat.mute
+                    ? Icon(Icons.notifications_off_rounded)
+                    : Icon(Icons.notifications),
                 iconSize: 30,
               ),
               Text("Unmute"),

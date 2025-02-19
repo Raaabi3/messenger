@@ -144,7 +144,7 @@ class _ChatscreenState extends State<Chatscreen> {
             IconButton(onPressed: () {
                Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Chatprofilescreen()),
+                        MaterialPageRoute(builder: (context) => Chatprofilescreen(chat: widget.chat,)),
                       );
             }, icon: const Icon(Icons.info_rounded)),
           ],

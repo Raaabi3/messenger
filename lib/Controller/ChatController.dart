@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class ChatController with ChangeNotifier {
   bool _typing = false;
   final TextEditingController _textController = TextEditingController();
-
   bool get typing => _typing;
   TextEditingController get textController => _textController;
 
