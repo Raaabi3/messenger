@@ -15,7 +15,8 @@ class _CustomDialogState extends State<CustomDialog> {
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController lastMessageController = TextEditingController();
   final TextEditingController sentMessageController = TextEditingController();
-  final TextEditingController receivedMessageController = TextEditingController();
+  final TextEditingController receivedMessageController =
+      TextEditingController();
   bool isOnline = false;
   bool isDelivered = true;
   bool isRead = true;
@@ -40,7 +41,8 @@ class _CustomDialogState extends State<CustomDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Add a Conversation", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text("Add a Conversation",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             SizedBox(height: 15),
             _buildAvatarPicker(),
             SizedBox(height: 15),
@@ -52,9 +54,12 @@ class _CustomDialogState extends State<CustomDialog> {
             SizedBox(height: 10),
             _buildTextField(receivedMessageController, "Received Message"),
             SizedBox(height: 10),
-            _buildCheckbox("Online?", isOnline, (val) => setState(() => isOnline = val)),
-            _buildCheckbox("Delivered?", isDelivered, (val) => setState(() => isDelivered = val)),
-            _buildCheckbox("Read?", isRead, (val) => setState(() => isRead = val)),
+            _buildCheckbox(
+                "Online?", isOnline, (val) => setState(() => isOnline = val)),
+            _buildCheckbox("Delivered?", isDelivered,
+                (val) => setState(() => isDelivered = val)),
+            _buildCheckbox(
+                "Read?", isRead, (val) => setState(() => isRead = val)),
             SizedBox(height: 20),
             _buildActionButtons(context),
           ],
@@ -71,7 +76,6 @@ class _CustomDialogState extends State<CustomDialog> {
           height: 50,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: Colors.grey.shade300,
           ),
           child: Icon(Icons.add),
         ),
@@ -88,7 +92,6 @@ class _CustomDialogState extends State<CustomDialog> {
         hintText: hintText,
         border: OutlineInputBorder(),
         filled: true,
-        fillColor: Colors.grey.shade100,
       ),
     );
   }
@@ -108,15 +111,22 @@ class _CustomDialogState extends State<CustomDialog> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text("Cancel")),
+        ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.grey[800]),
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text("Cancel", style: TextStyle(color: Colors.white))),
         SizedBox(width: 10),
         ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.grey[800]),
           onPressed: () {
-            final homeController = Provider.of<HomescreenController>(context, listen: false);
+            final homeController =
+                Provider.of<HomescreenController>(context, listen: false);
             homeController.addChat(
               Chat(
                 image: "assets/images/noAvatar.jpg",
-                username: usernameController.text.isEmpty ? 'Zbiba' : usernameController.text,
+                username: usernameController.text.isEmpty
+                    ? 'Zbiba'
+                    : usernameController.text,
                 lastmessage: lastMessageController.text.isEmpty
                     ? 'Running 15 mins late, traffic is crazy! 🚗'
                     : lastMessageController.text,
@@ -130,18 +140,23 @@ class _CustomDialogState extends State<CustomDialog> {
                     sentMessage: sentMessageController.text.isEmpty
                         ? "Hey Sarah, are you on your way?"
                         : sentMessageController.text,
-                    sentMessageTime: DateTime.now().subtract(Duration(minutes: 30)),
+                    sentMessageTime:
+                        DateTime.now().subtract(Duration(minutes: 30)),
                     receivedMessage: receivedMessageController.text.isEmpty
                         ? "Yes, but I'm stuck in traffic. Running 15 mins late!"
                         : receivedMessageController.text,
-                    receivedMessageTime: DateTime.now().subtract(Duration(minutes: 20)),
+                    receivedMessageTime:
+                        DateTime.now().subtract(Duration(minutes: 20)),
                   ),
                 ],
               ),
             );
             Navigator.of(context).pop();
           },
-          child: Text("Add"),
+          child: Text(
+            "Add",
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ],
     );

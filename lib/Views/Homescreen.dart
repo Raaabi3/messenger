@@ -8,6 +8,7 @@ import '../Controller/HomeController.dart';
 import '../Controller/ThemeProvider.dart';
 import '../Models/Chat.dart';
 import '../Models/Conversation.dart';
+import '../Models/Helpers/mock_data.dart';
 import '../Widgets/CarouselItem.dart';
 import '../Widgets/ChatListItem.dart';
 import '../Widgets/ConversationAction.dart';
@@ -64,32 +65,8 @@ class _HomescreenState extends State<Homescreen> {
     Future.delayed(Duration(seconds: 2), () {
       final homeController =
           Provider.of<HomescreenController>(context, listen: false);
-      homeController.addChats([
-        Chat(
-          image: "assets/images/ProfilePic.jpeg",
-          username: 'Sarah Johnson',
-          lastmessage: 'Running 15 mins late, traffic is crazy! 🚗',
-          lastSeenTime: DateTime.now().subtract(Duration(minutes: 15)),
-          status: true,
-          received: true,
-          read: true,
-          time: DateTime(2025, 2, 15, 14, 30),
-          conversations: [
-            Conversation(
-              sentMessage: "Hey Sarah, are you on your way?",
-              sentMessageTime: DateTime(2025, 2, 15, 14, 0),
-              receivedMessage:
-                  "Yes, but I'm stuck in traffic. Running 15 mins late!",
-              receivedMessageTime: DateTime(2025, 2, 15, 14, 10),
-            ),
-            Conversation(
-              sentMessage: "No worries, take your time!",
-              sentMessageTime: DateTime(2025, 2, 15, 14, 15),
-            ),
-          ],
-        ),
-        // Add more chats as needed
-      ]);
+      homeController.addChats(mockChats); // Use the mock data
+
       setState(() {
         isLoading = false;
       });
@@ -176,21 +153,275 @@ class _HomescreenState extends State<Homescreen> {
               ],
             )
           : null,
-          drawer: Drawer(
-        
+      drawer: Drawer(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListTile(
+                leading: CircleAvatar(
+                  radius: 20,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.asset("assets/images/me.jpg"),
+                  ),
+                ),
+                title: Row(
+                  children: [
+                    Text(
+                      "Mohamed Ben R..",
+                      style:
+                          TextStyle(fontFamily: "SfProDisplay", fontSize: 15),
+                    ),
+                    Icon(Icons.keyboard_arrow_down_sharp),
+                    Spacer(),
+                    Icon(Icons.settings)
+                  ],
+                ),
+                onTap: () {},
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ListTile(
+                selected: true,
+                selectedTileColor: Colors.grey[800],
+                selectedColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                leading: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[700],
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Icon(
+                        Icons.chat_bubble,
+                      ),
+                    )),
+                title: Text(
+                  "Chats",
+                  style: TextStyle(fontFamily: "SfProDisplay", fontSize: 15),
+                ),
+                onTap: () {},
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ListTile(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                leading: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[800],
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Icon(
+                        Icons.store_mall_directory,
+                      ),
+                    )),
+                title: Text(
+                  "Marketplace",
+                  style: TextStyle(fontFamily: "SfProDisplay", fontSize: 15),
+                ),
+                onTap: () {},
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ListTile(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                leading: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[800],
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Icon(
+                        Icons.chat_rounded,
+                      ),
+                    )),
+                title: Text(
+                  "Message Requests",
+                  style: TextStyle(fontFamily: "SfProDisplay", fontSize: 15),
+                ),
+                onTap: () {},
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ListTile(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                leading: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[800],
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Icon(
+                        Icons.archive,
+                      ),
+                    )),
+                title: Text(
+                  "Archive",
+                  style: TextStyle(fontFamily: "SfProDisplay", fontSize: 15),
+                ),
+                onTap: () {},
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 18.0),
+              child: Text(
+                "More",
+                style: TextStyle(
+                    fontFamily: "SfProDisplay",
+                    fontSize: 15,
+                    color: Colors.grey),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ListTile(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                leading: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[800],
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Icon(
+                        Icons.people,
+                      ),
+                    )),
+                title: Text(
+                  "Friend Requests",
+                  style: TextStyle(fontFamily: "SfProDisplay", fontSize: 15),
+                ),
+                onTap: () {},
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ListTile(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                leading: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[800],
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Icon(
+                        Icons.voice_chat,
+                      ),
+                    )),
+                title: Text(
+                  "Channel invites",
+                  style: TextStyle(fontFamily: "SfProDisplay", fontSize: 15),
+                ),
+                onTap: () {},
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 18.0),
+              child: Text(
+                "Communities",
+                style: TextStyle(
+                    fontFamily: "SfProDisplay",
+                    fontSize: 15,
+                    color: Colors.grey),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ListTile(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                leading: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[800],
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Icon(
+                        Icons.add,
+                      ),
+                    )),
+                title: Text(
+                  "Create community",
+                  style: TextStyle(fontFamily: "SfProDisplay", fontSize: 15),
+                ),
+                onTap: () {},
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child: Text(
+                "Facebook groups",
+                style: TextStyle(
+                    fontFamily: "SfProDisplay",
+                    fontSize: 15,
+                    color: Colors.grey),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ListTile(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                leading: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.grey[800],
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: Icon(
+                        Icons.check_box_outline_blank,
+                      ),
+                    )),
+                title: Text(
+                  "Anything",
+                  style: TextStyle(fontFamily: "SfProDisplay", fontSize: 15),
+                ),
+                onTap: () {},
+              ),
+            ),
+          ],
+        ),
       ),
       appBar: AppBar(
+        toolbarHeight: 60,
         leading: Builder(
           builder: (context) {
             return Padding(
               padding: const EdgeInsets.all(8.0),
-              child: IconButton.filled(
-                onPressed: () {
-                  Scaffold.of(context).openDrawer(); 
-                },
-                icon: Icon(
-                  Icons.menu,
-                ),
+              child: Stack(
+                children: [
+                  IconButton.filled(
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                    icon: Icon(
+                      Icons.menu,
+                    ),
+                  ),
+                  Positioned(
+                      right: 0,
+                      top: 0,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.black,
+                        radius: 8,
+                        child: CircleAvatar(
+                          radius: 5,
+                          backgroundColor: Colors.red,
+                        ),
+                      ))
+                ],
               ),
             );
           },
@@ -215,64 +446,113 @@ class _HomescreenState extends State<Homescreen> {
         child: Column(
           children: [
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
-              child: Container(
-                height: 30,
-                child: TextField(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(20),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+                child: Container(
+                  height: 35,
+                  child: TextField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      hintText: 'Ask Meta AI or Search',
+                      hintStyle: TextStyle(
+                        color: Colors.grey[600],
+                        fontFamily: "SfProDisplay",
+                      ),
+                      prefixIcon: Image.asset(
+                        "assets/images/meta-ai.png",
+                        scale: 12,
+                      ),
+                      filled: true,
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 0), // Adjust vertical padding
                     ),
-                    hintText: 'Search',
-                    maintainHintHeight: true,
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                      fontFamily: "SfProDisplay",
+                  ),
+                )),
+            SizedBox(height: 14),
+            Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: CarouselSlider(
+                    options: CarouselOptions(
+                      height: 100.0,
+                      enableInfiniteScroll: false,
+                      viewportFraction: 0.25,
+                      padEnds: false,
                     ),
-                    prefixIcon: Icon(Icons.search_sharp, color: Colors.grey),
-                    filled: true,
+                    items: [
+                      Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 35,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(35),
+                              child: Image.asset(
+                                "assets/images/me.jpg",
+                                fit: BoxFit.fitWidth,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            "Your Note",
+                            style: TextStyle(
+                                fontFamily: "SfProDisplay",
+                                color: Colors.grey[700]),
+                          ),
+                        ],
+                      ),
+                      ...List.generate(homeController.chats.length, (index) {
+                        if (index < homeController.chats.length) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Chatscreen(
+                                          chat: homeController.chats[index],
+                                        )),
+                              );
+                            },
+                            child: CarouselItem(
+                              imagePath: homeController.chats[index].image!,
+                              label: homeController.chats[index].username!
+                                  .split(" ")[0],
+                            ),
+                          );
+                        } else {
+                          // Return a placeholder or empty widget if the index is out of bounds
+                          return SizedBox.shrink();
+                        }
+                      }),
+                    ],
                   ),
                 ),
-              ),
-            ),
-            SizedBox(height: 14),
-            CarouselSlider(
-              options: CarouselOptions(
-                height: 100.0,
-                enableInfiniteScroll: false,
-                viewportFraction: 0.2,
-                padEnds: false,
-              ),
-              items: [
-                Column(
-                  children: [
-                    CircleAvatar(
-                                  radius: 30,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(30),
-                                    child: Image.asset(
-                                      "assets/images/me.jpg",
-                                      fit: BoxFit.fitWidth,
-                                    ),
+                /*Positioned(
+                            left: 7,
+                            top: 0,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: Colors.grey[800],
+                                borderRadius: BorderRadius.circular(20)
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Text(
+                                  "Drop a thought",
+                                  style: TextStyle(
+                                    fontFamily: "SfProDisplay",
+                                    fontSize: 10,
+                                    color: Colors.grey
                                   ),
                                 ),
-                    SizedBox(height: 8),
-                    Text(
-                      "Your Note",
-                      style: TextStyle(
-                          fontFamily: "SfProDisplay", color: Colors.grey[700]),
-                    ),
-                  ],
-                ),
-                ...List.generate(
-                  6,
-                  (index) => CarouselItem(
-                    imagePath: "assets/images/${index + 1}.jpg",
-                    label: "${imageslist[index + 1]?.split(" ")[0]}",
-                  ),
-                ),
+                              ),
+                              
+                            ),
+                          )*/
               ],
             ),
             Expanded(
@@ -296,6 +576,8 @@ class _HomescreenState extends State<Homescreen> {
                         child: GestureDetector(
                           onLongPress: () {
                             showBarModalBottomSheet(
+                              backgroundColor:
+                                  const Color.fromARGB(255, 34, 33, 33),
                               context: context,
                               builder: (context) => Container(
                                   height: 450,

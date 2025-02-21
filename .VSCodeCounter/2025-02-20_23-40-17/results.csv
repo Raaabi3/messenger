@@ -1,0 +1,20 @@
+"filename", "language", "Dart", "comment", "blank", "total"
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Controller\ChatController.dart", "Dart", 15, 0, 3, 18
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Controller\HomeController.dart", "Dart", 29, 1, 6, 36
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Controller\ThemeProvider.dart", "Dart", 24, 0, 7, 31
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Models\Chat.dart", "Dart", 24, 0, 2, 26
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Models\Conversation.dart", "Dart", 12, 0, 1, 13
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Models\Helpers\MessageItem .dart", "Dart", 10, 0, 1, 11
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Models\Helpers\mock_data.dart", "Dart", 93, 0, 2, 95
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Views\ChatProfileScreen.dart", "Dart", 255, 7, 11, 273
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Views\ChatScreen.dart", "Dart", 357, 1, 13, 371
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Views\Homescreen.dart", "Dart", 331, 1, 15, 347
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Widgets\CarouselItem.dart", "Dart", 46, 0, 4, 50
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Widgets\ChatListItem.dart", "Dart", 84, 0, 4, 88
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Widgets\ConversationAction.dart", "Dart", 76, 5, 3, 84
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Widgets\CustomDialog.dart", "Dart", 155, 0, 10, 165
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Widgets\MessageAction.dart", "Dart", 59, 0, 3, 62
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Widgets\MessageBubble.dart", "Dart", 163, 0, 8, 171
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\Widgets\SendStatus.dart", "Dart", 27, 0, 5, 32
+"c:\Users\Administrator\Documents\My Flutter Projects\messenger\lib\main.dart", "Dart", 50, 0, 5, 55
+"Total", "-", 1810, 15, 103, 1928

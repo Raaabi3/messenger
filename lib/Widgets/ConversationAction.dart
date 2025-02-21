@@ -16,94 +16,67 @@ class _ConversationActionState extends State<ConversationAction> {
       padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 10),
       child: Column(
         children: [
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.delete_outline_rounded),
-                iconSize: 30,
-              ),
-              Text("Archive"),
-            ],
+          ListTile(
+            leading: Icon(Icons.delete_outline_rounded, size: 30),
+            title: Text("Archive"),
+            onTap: () {
+            },
           ),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.do_disturb_off_sharp),
-                iconSize: 30,
-              ),
-              Text("Ignore"),
-            ],
+          ListTile(
+            leading: Icon(Icons.do_disturb_off_sharp, size: 30),
+            title: Text("Ignore"),
+            onTap: () {
+              // Handle ignore action
+            },
           ),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.person_add),
-                iconSize: 30,
-              ),
-              Text("Add members"),
-            ],
+          ListTile(
+            leading: Icon(Icons.person_add, size: 30),
+            title: Text("Add members"),
+            onTap: () {
+              // Handle add members action
+            },
           ),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    widget.chat.mute = !widget.chat.mute;
-                  });
-                },
-                icon: widget.chat.mute
-                    ? Icon(Icons.notifications_off_rounded)
-                    : Icon(Icons.notifications),
-                iconSize: 30,
-              ),
-              Text("Unmute"),
-            ],
+          ListTile(
+            leading: Icon(
+              widget.chat.mute
+                  ? Icons.notifications_off_rounded
+                  : Icons.notifications,
+              size: 30,
+            ),
+            title: Text(widget.chat.mute ? "Unmute" : "Mute"),
+            onTap: () {
+              setState(() {
+                widget.chat.mute = !widget.chat.mute;
+              });
+            },
           ),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.bubble_chart_rounded),
-                iconSize: 30,
-              ),
-              Text("Open chat head"),
-            ],
+          ListTile(
+            leading: Icon(Icons.bubble_chart_rounded, size: 30),
+            title: Text("Open chat head"),
+            onTap: () {
+              // Handle open chat head action
+            },
           ),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.drafts_outlined),
-                iconSize: 30,
-              ),
-              Text("Mark as read"),
-            ],
+          ListTile(
+            leading: Icon(Icons.drafts_outlined, size: 30),
+            title: Text("Mark as read"),
+            onTap: () {
+            },
           ),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.exit_to_app_rounded),
-                color: Colors.red,
-                iconSize: 30,
-              ),
-              Text("Leave group"),
-            ],
+          ListTile(
+            leading: Icon(Icons.exit_to_app_rounded, size: 30, color: Colors.red),
+            title: Text("Leave group", style: TextStyle(color: Colors.red)),
+            onTap: () {
+              // Handle leave group action
+            },
           ),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.delete),
-                color: Colors.red,
-                iconSize: 30,
-              ),
-              Text("Delete"),
-            ],
-          )
+          ListTile(
+            leading: Icon(Icons.delete, size: 30, color: Colors.red),
+            title: Text("Delete", style: TextStyle(color: Colors.red)),
+            onTap: () {
+              // Handle delete action
+            },
+          ),
         ],
       ),
     );

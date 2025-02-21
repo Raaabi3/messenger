@@ -93,9 +93,9 @@ class _ChatscreenState extends State<Chatscreen> {
               children: [
                 CircleAvatar(
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(30),
                     child: Image.asset(
-                      "assets/images/ProfilePic.jpeg",
+                      widget.chat.image!,
                       fit: BoxFit.fill,
                     ),
                   ),
@@ -126,27 +126,56 @@ class _ChatscreenState extends State<Chatscreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Text(
-                    "Active",
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontFamily: "SfProDisplay",
-                      color: Colors.grey,
-                    ),
-                  ),
+                  !widget.chat.status!
+                      ? Text(
+                          "Active",
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontFamily: "SfProDisplay",
+                            color: Colors.grey,
+                          ),
+                        )
+                      : DateTime.now()
+                                  .difference(widget.chat.lastSeenTime!)
+                                  .inMinutes <
+                              60
+                          ? Text(
+                              "Active ${DateTime.now().difference(widget.chat.lastSeenTime!).inMinutes.toString()}m ago",
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontFamily: "SfProDisplay",
+                                color: Colors.grey,
+                              ))
+                          : Text(
+                              "Active ${DateTime.now().difference(widget.chat.lastSeenTime!).inHours.toString()}h ago",
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontFamily: "SfProDisplay",
+                                color: Colors.grey,
+                              ))
                 ],
               ),
             ),
-            const Spacer(),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.call)),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.videocam)),
-            IconButton(onPressed: () {
-               Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => Chatprofilescreen(chat: widget.chat,)),
-                      );
-            }, icon: const Icon(Icons.info_rounded)),
+            
           ],
+        ),
+        flexibleSpace: Center(
+          child: Row(children: [
+            const Spacer(),
+              IconButton(onPressed: () {}, icon: const Icon(Icons.call)),
+              IconButton(onPressed: () {}, icon: const Icon(Icons.videocam)),
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Chatprofilescreen(
+                                chat: widget.chat,
+                              )),
+                    );
+                  },
+                  icon: const Icon(Icons.info_rounded)),
+          ],),
         ),
       ),
       body: ListView(
@@ -156,9 +185,9 @@ class _ChatscreenState extends State<Chatscreen> {
             radius: 50,
             backgroundColor: Colors.grey,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(50),
               child: Image.asset(
-                "assets/images/ProfilePic.jpeg",
+                widget.chat.image!,
                 fit: BoxFit.fill,
               ),
             ),
@@ -181,52 +210,38 @@ class _ChatscreenState extends State<Chatscreen> {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 20),
-          Center(
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Positioned(
-                  child: CircleAvatar(
-                    radius: 30,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Image.asset(
-                        "assets/images/ProfilePic.jpeg",
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  left: 40,
-                  child: CircleAvatar(
-                    radius: 30,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Image.asset(
-                        "assets/images/ProfilePic.jpeg",
-                        fit: BoxFit.fill,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
           Text(
-            "Say hi to your new Facebook friend, ${widget.chat.username}",
+            "Lives in Tunis, Tunisia",
             style: TextStyle(
+              color: Colors.grey,
               fontFamily: "SfProDisplay",
-              fontSize: 12,
-              color: Colors.grey[300],
             ),
             textAlign: TextAlign.center,
           ),
+          const SizedBox(height: 10),
+          Center(
+            child: Container(
+              height: 25,
+              width: 100,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.grey[900]),
+              child: Center(
+                child: Text(
+                  "View Profile",
+                  style: TextStyle(
+                    fontFamily: "SfProDisplay",
+                    fontSize: 12,
+                    color: Colors.grey[300],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
           const SizedBox(height: 180),
           ...messages
-              .map((message) => MessageBubble(message: message))
+              .map((message) => MessageBubble(chat : widget.chat!,message: message))
               .toList(),
         ],
       ),
@@ -265,76 +280,78 @@ class _ChatscreenState extends State<Chatscreen> {
                   icon: const Icon(Icons.mic),
                 ),
               Expanded(
-                child: TextField(
-                  controller: chatController.textController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    suffixIcon: IconButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled:
-                              true, // Allows the sheet to expand and push content up
-                          backgroundColor: Colors
-                              .transparent, // Optional: For a transparent background
-                          builder: (context) {
-                            return DraggableScrollableSheet(
-                              initialChildSize:
-                                  0.5, // Initial size (50% of the screen)
-                              minChildSize: 0.25, // Minimum size when collapsed
-                              maxChildSize:
-                                  0.9, // Maximum size (90% of the screen)
-                              builder: (context, scrollController) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(16)),
-                                  ),
-                                  child: ListView(
-                                    controller: scrollController,
-                                    children: [
-                                      Center(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(16.0),
-                                          child: Text("Drag me up!"),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical:10.0),
+                  child: TextField(
+                    controller: chatController.textController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      suffixIcon: IconButton(
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled:
+                                true, // Allows the sheet to expand and push content up
+                            backgroundColor: Colors
+                                .transparent, // Optional: For a transparent background
+                            builder: (context) {
+                              return DraggableScrollableSheet(
+                                initialChildSize:
+                                    0.5, // Initial size (50% of the screen)
+                                minChildSize: 0.25, // Minimum size when collapsed
+                                maxChildSize:
+                                    0.9, // Maximum size (90% of the screen)
+                                builder: (context, scrollController) {
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(16)),
+                                    ),
+                                    child: ListView(
+                                      controller: scrollController,
+                                      children: [
+                                        Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: Text("Drag me up!"),
+                                          ),
                                         ),
-                                      ),
-                                      // Add more widgets here
-                                    ],
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        );
-                      },
-                      icon: const Icon(Icons.emoji_emotions),
+                                        // Add more widgets here
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        },
+                        icon: const Icon(Icons.emoji_emotions),
+                      ),
+                      hintText: 'Message',
+                      hintStyle: const TextStyle(
+                        color: Colors.grey,
+                        fontFamily: "SfProDisplay",
+                      ),
+                      filled: true,
                     ),
-                    hintText: 'Message',
-                    hintStyle: const TextStyle(
-                      color: Colors.grey,
-                      fontFamily: "SfProDisplay",
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                  ),
-                  onChanged: (text) {
-                    if (text.isEmpty) {
-                      chatController.setTyping(false);
-                    } else {
+                    onChanged: (text) {
+                      if (text.isEmpty) {
+                        chatController.setTyping(false);
+                      } else {
+                        chatController.setTyping(true);
+                      }
+                    },
+                    onTap: () {
                       chatController.setTyping(true);
-                    }
-                  },
-                  onTap: () {
-                    chatController.setTyping(true);
-                  },
-                  onSubmitted: (text) {
-                    _sendMessage(chatController);
-                    chatController.setTyping(false);
-                  },
+                    },
+                    onSubmitted: (text) {
+                      _sendMessage(chatController);
+                      chatController.setTyping(false);
+                    },
+                  ),
                 ),
               ),
               !chatController.typing

@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../Controller/HomeController.dart';
+import '../Models/Chat.dart';
 import '../Models/Helpers/MessageItem .dart';
 import 'MessageAction.dart';
 
 class MessageBubble extends StatefulWidget {
   final MessageItem message;
+  final Chat chat;
 
-  const MessageBubble({super.key, required this.message});
+
+  const MessageBubble({super.key,required this.chat, required this.message});
 
   @override
   State<MessageBubble> createState() => _MessageBubbleState();
@@ -48,11 +51,11 @@ class _MessageBubbleState extends State<MessageBubble> {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         if (!widget.message.isSent)
-                          const Padding(
-                            padding: EdgeInsets.only(right: 8),
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8),
                             child: CircleAvatar(
                               backgroundImage:
-                                  AssetImage("assets/images/ProfilePic.jpeg"),
+                                  AssetImage(widget.chat.image!),
                               radius: 16,
                             ),
                           ),
@@ -119,8 +122,8 @@ class _MessageBubbleState extends State<MessageBubble> {
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: widget.message.isSent
-                                    ? Colors.purple[100]
-                                    : Colors.grey[200],
+                                    ? const Color.fromARGB(255, 43, 0, 51)
+                                    : Colors.grey[900],
                                 borderRadius: BorderRadius.only(
                                   topLeft: const Radius.circular(50),
                                   topRight: const Radius.circular(50),

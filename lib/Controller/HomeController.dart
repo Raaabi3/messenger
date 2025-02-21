@@ -6,8 +6,8 @@ class HomescreenController with ChangeNotifier {
   bool _addconv = false;
   bool get addconv => _addconv;
 
-  List<Chat> _chats = [];
-  List<Chat> get chats => _chats;
+  List<Chat> chats = [];
+  List<Chat> get _chats => chats;
 
   void setconv() {
     _addconv = !_addconv;

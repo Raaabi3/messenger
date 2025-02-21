@@ -13,11 +13,19 @@ class Sendstatus extends StatefulWidget {
 class _SendstatusState extends State<Sendstatus> {
   @override
   Widget build(BuildContext context) {
-    return !widget.chat.mute ? widget.chat.received! 
-        ? widget.chat.read!
-            ? Icon(Icons.check_circle,color: Colors.blueAccent ,size: 20,)
-            : Icon(Icons.check_circle_outline,color: Colors.grey,size: 20)
-        : Icon(Icons.circle_outlined ,color: Colors.grey,size: 20) :
-        Icon(Icons.notifications_off_rounded ,color: Colors.grey,size: 20); 
+    return !widget.chat.mute
+        ? widget.chat.received!
+            ? widget.chat.read!
+                ? CircleAvatar(
+                    radius: 10,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(widget.chat.image!),
+                    ),
+                  )
+                : Icon(Icons.check_circle,
+                    color: Colors.blueAccent, size: 20)
+            : Icon(Icons.circle_outlined, color: Colors.grey, size: 20)
+        : Icon(Icons.notifications_off_rounded, color: Colors.grey, size: 20);
   }
 }

@@ -17,7 +17,7 @@ class ChatListItem extends StatelessWidget {
           CircleAvatar(
             radius: 30,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(30),
               child: Image.asset(
                 chat.image!,
                 fit: BoxFit.fill,
@@ -69,7 +69,7 @@ class ChatListItem extends StatelessWidget {
         children: [
           Flexible(
             child: Text(
-              "You: ${chat.lastmessage} • ",
+              "${chat.lastmessage} • ",
               style: TextStyle(fontFamily: "SfProDisplay", color: Colors.grey),
               overflow: TextOverflow.ellipsis,
             ),

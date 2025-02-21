@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
                   WidgetStateProperty.all(Colors.white), // Fix switch color
               trackColor: WidgetStateProperty.all(Colors.grey),
             ),
-
+            
             colorScheme: ColorScheme.dark(
               primary: Colors.grey[900]!, // Fix default purple
               secondary: Colors.teal, // Accent color

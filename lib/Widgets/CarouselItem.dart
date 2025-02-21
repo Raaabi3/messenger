@@ -17,7 +17,7 @@ class CarouselItem extends StatelessWidget {
         Stack(
           children: [
             CircleAvatar(
-              radius: 30,
+              radius: 35,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(30),
                 child: Image.asset(
