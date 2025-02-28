@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'dart:io';
 import '../Models/Chat.dart';
-import '../Models/Conversation.dart';
+import '../Models/ChatMessage.dart';
 import '../Controller/HomeController.dart';
 
 class CustomDialog extends StatefulWidget {
@@ -21,6 +23,7 @@ class _CustomDialogState extends State<CustomDialog> {
   bool isDelivered = true;
   bool isRead = true;
   DateTime selectedTime = DateTime.now();
+  File? _selectedImage; // To store the selected image
 
   @override
   void dispose() {
@@ -29,6 +32,18 @@ class _CustomDialogState extends State<CustomDialog> {
     sentMessageController.dispose();
     receivedMessageController.dispose();
     super.dispose();
+  }
+
+  // Method to pick an image from the gallery
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
   }
 
   @override
@@ -69,19 +84,31 @@ class _CustomDialogState extends State<CustomDialog> {
   }
 
   Widget _buildAvatarPicker() {
-    return Row(
-      children: [
-        Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
+    return GestureDetector(
+      onTap: _pickImage, // Open image picker when tapped
+      child: Row(
+        children: [
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.grey[300],
+              image: _selectedImage != null
+                  ? DecorationImage(
+                      image: FileImage(_selectedImage!), // Display selected image
+                      fit: BoxFit.cover,
+                    )
+                  : null,
+            ),
+            child: _selectedImage == null
+                ? Icon(Icons.add, color: Colors.grey[800])
+                : null,
           ),
-          child: Icon(Icons.add),
-        ),
-        SizedBox(width: 10),
-        Text("User Avatar", style: TextStyle(fontSize: 16)),
-      ],
+          SizedBox(width: 10),
+          Text("User Avatar", style: TextStyle(fontSize: 16)),
+        ],
+      ),
     );
   }
 
@@ -123,7 +150,9 @@ class _CustomDialogState extends State<CustomDialog> {
                 Provider.of<HomescreenController>(context, listen: false);
             homeController.addChat(
               Chat(
-                image: "assets/images/noAvatar.jpg",
+                image: _selectedImage != null
+                    ? _selectedImage!.path // Use selected image path
+                    : "assets/images/noAvatar.jpg", // Default image
                 username: usernameController.text.isEmpty
                     ? 'Zbiba'
                     : usernameController.text,
@@ -136,7 +165,7 @@ class _CustomDialogState extends State<CustomDialog> {
                 read: isRead,
                 time: selectedTime,
                 conversations: [
-                  Conversation(
+                  ChatMessage(
                     sentMessage: sentMessageController.text.isEmpty
                         ? "Hey Sarah, are you on your way?"
                         : sentMessageController.text,

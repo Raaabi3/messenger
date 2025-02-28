@@ -1,19 +1,30 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:messenger/Controller/HomeController.dart';
 import 'package:messenger/Views/Homescreen.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'Controller/ChatController.dart';
 import 'Controller/ThemeProvider.dart';
 
 void main() async {
+  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
+
   WidgetsFlutterBinding.ensureInitialized();
+  final chatController = ChatController();
+  await chatController.loadChats();
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => ChatController()),
         ChangeNotifierProvider(create: (_) => HomescreenController()),
+                ChangeNotifierProvider(create: (_) => ChatController()),
+
       ],
       child: MyApp(),
     ),

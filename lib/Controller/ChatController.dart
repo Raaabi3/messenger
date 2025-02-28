@@ -1,18 +1,33 @@
 import 'package:flutter/material.dart';
+import '../Models/Chat.dart';
+import '../Models/DatabaseHelper.dart';
 
 class ChatController with ChangeNotifier {
-  bool _typing = false;
-  final TextEditingController _textController = TextEditingController();
-  bool get typing => _typing;
-  TextEditingController get textController => _textController;
+  final TextEditingController textController = TextEditingController();
+  bool typing = false;
 
-  void setTyping(bool value) {
-    _typing = value;
-    notifyListeners(); 
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+
+  List<Chat> chats = [];
+
+  Future<void> loadChats() async {
+    chats = await _databaseHelper.loadChats();
+    notifyListeners();
+  }
+
+  Future<void> addChat(Chat chat) async {
+    await _databaseHelper.saveChat(chat);
+    chats.add(chat);
+    notifyListeners();
+  }
+
+  void setTyping(bool isTyping) {
+    typing = isTyping;
+    notifyListeners();
   }
 
   void clearText() {
-    _textController.clear();
+    textController.clear();
     notifyListeners();
   }
 }

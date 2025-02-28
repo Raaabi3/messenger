@@ -1,10 +1,10 @@
-class Conversation {
+class ChatMessage {
   String? sentMessage;
   String? receivedMessage;
   DateTime? sentMessageTime;
   DateTime? receivedMessageTime;
 
-  Conversation({
+  ChatMessage ({
     this.sentMessage,
     this.receivedMessage,
     this.sentMessageTime,

@@ -24,7 +24,7 @@ class ChatListItem extends StatelessWidget {
               ),
             ),
           ),
-          chat.lastSeenTime != DateTime.now &&
+          !chat.status! &&
                   (DateTime.now().difference(chat.lastSeenTime!).inMinutes < 60)
               ? Positioned(
                   bottom: 0,
@@ -63,7 +63,7 @@ class ChatListItem extends StatelessWidget {
       title: Text(
         chat.username!,
         style:
-            TextStyle(fontFamily: "SfProDisplay", fontWeight: FontWeight.bold),
+            TextStyle(fontFamily: "SfProDisplay"),
       ),
       subtitle: Row(
         children: [

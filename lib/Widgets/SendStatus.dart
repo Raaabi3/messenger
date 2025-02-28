@@ -13,9 +13,8 @@ class Sendstatus extends StatefulWidget {
 class _SendstatusState extends State<Sendstatus> {
   @override
   Widget build(BuildContext context) {
-    return !widget.chat.mute
+    return !widget.chat.mute!
         ? widget.chat.received!
-            ? widget.chat.read!
                 ? CircleAvatar(
                     radius: 10,
                     child: ClipRRect(
@@ -23,8 +22,6 @@ class _SendstatusState extends State<Sendstatus> {
                       child: Image.asset(widget.chat.image!),
                     ),
                   )
-                : Icon(Icons.check_circle,
-                    color: Colors.blueAccent, size: 20)
             : Icon(Icons.circle_outlined, color: Colors.grey, size: 20)
         : Icon(Icons.notifications_off_rounded, color: Colors.grey, size: 20);
   }

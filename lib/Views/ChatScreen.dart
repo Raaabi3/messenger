@@ -3,9 +3,8 @@ import 'package:messenger/Views/ChatProfileScreen.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import '../Controller/ChatController.dart';
-import '../Models/Conversation.dart';
 import '../Models/Chat.dart';
-import '../Models/Helpers/MessageItem .dart';
+import '../Models/Helpers/Message.dart';
 import '../Widgets/MessageBubble.dart';
 
 class Chatscreen extends StatefulWidget {
@@ -18,7 +17,7 @@ class Chatscreen extends StatefulWidget {
 }
 
 class _ChatscreenState extends State<Chatscreen> {
-  List<MessageItem> messages = [];
+  List<Message> messages = [];
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -34,14 +33,14 @@ class _ChatscreenState extends State<Chatscreen> {
     if (widget.chat.conversations != null) {
       for (var conversation in widget.chat.conversations!) {
         if (conversation.sentMessageTime != null) {
-          messages.add(MessageItem(
+          messages.add(Message(
             text: conversation.sentMessage!,
             time: conversation.sentMessageTime!,
             isSent: true,
           ));
         }
         if (conversation.receivedMessageTime != null) {
-          messages.add(MessageItem(
+          messages.add(Message(
             text: conversation.receivedMessage!,
             time: conversation.receivedMessageTime!,
             isSent: false,
@@ -57,7 +56,7 @@ class _ChatscreenState extends State<Chatscreen> {
     final text = chatController.textController.text.trim();
     if (text.isNotEmpty) {
       setState(() {
-        messages.add(MessageItem(
+        messages.add(Message(
           text: text,
           time: DateTime.now(),
           isSent: true,
@@ -91,7 +90,7 @@ class _ChatscreenState extends State<Chatscreen> {
           children: [
             Stack(
               children: [
-                CircleAvatar(
+                 CircleAvatar(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(30),
                     child: Image.asset(
@@ -100,13 +99,13 @@ class _ChatscreenState extends State<Chatscreen> {
                     ),
                   ),
                 ),
-                Positioned(
+                 if (widget.chat.status!) Positioned(
                   bottom: 0,
                   right: 0,
                   child: CircleAvatar(
                     radius: 7,
                     child: CircleAvatar(
-                      backgroundColor: Colors.green[400],
+                      backgroundColor:   Colors.green[400]  ,
                       radius: 5,
                     ),
                   ),
@@ -123,12 +122,11 @@ class _ChatscreenState extends State<Chatscreen> {
                     style: const TextStyle(
                       fontSize: 15,
                       fontFamily: "SfProDisplay",
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  !widget.chat.status!
+                  widget.chat.status!
                       ? Text(
-                          "Active",
+                          "Active Now",
                           style: TextStyle(
                             fontSize: 11,
                             fontFamily: "SfProDisplay",

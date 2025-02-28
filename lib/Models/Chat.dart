@@ -1,4 +1,4 @@
-import 'Conversation.dart';
+import 'ChatMessage.dart';
 
 class Chat {
   String? image;
@@ -8,7 +8,7 @@ class Chat {
   bool? received;
   bool? read;
   DateTime? time;
-  List<Conversation>? conversations;
+  List<ChatMessage>? conversations;
   DateTime? lastSeenTime;
   bool mute = false;
 

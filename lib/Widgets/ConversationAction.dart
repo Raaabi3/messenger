@@ -38,15 +38,15 @@ class _ConversationActionState extends State<ConversationAction> {
           ),
           ListTile(
             leading: Icon(
-              widget.chat.mute
+              widget.chat.mute!
                   ? Icons.notifications_off_rounded
                   : Icons.notifications,
               size: 30,
             ),
-            title: Text(widget.chat.mute ? "Unmute" : "Mute"),
+            title: Text(widget.chat.mute! ? "Unmute" : "Mute"),
             onTap: () {
               setState(() {
-                widget.chat.mute = !widget.chat.mute;
+                widget.chat.mute = !widget.chat.mute!;
               });
             },
           ),

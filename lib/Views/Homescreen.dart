@@ -1,13 +1,9 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../Controller/HomeController.dart';
 import '../Controller/ThemeProvider.dart';
-import '../Models/Chat.dart';
-import '../Models/Conversation.dart';
 import '../Models/Helpers/mock_data.dart';
 import '../Widgets/CarouselItem.dart';
 import '../Widgets/ChatListItem.dart';
@@ -437,7 +433,7 @@ class _HomescreenState extends State<Homescreen> {
               ),
             ),
             Spacer(),
-            IconButton.filled(onPressed: () {}, icon: Icon(Icons.edit_rounded)),
+            IconButton.filled(onPressed: () {}, icon: Icon(Icons.mode_edit_rounded,size: 18,)),
           ],
         ),
       ),

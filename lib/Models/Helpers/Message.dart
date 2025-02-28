@@ -1,9 +1,9 @@
-class MessageItem {
+class Message  {
   final String text;
   final DateTime time;
   final bool isSent;
 
-  MessageItem({
+  Message({
     required this.text,
     required this.time,
     required this.isSent,
