@@ -1,23 +1,24 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:messenger/Controller/HomeController.dart';
 import 'package:messenger/Views/Homescreen.dart';
 import 'package:provider/provider.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-
 import 'Controller/ChatController.dart';
 import 'Controller/ThemeProvider.dart';
+import 'Models/Helpers/Message.dart';
 
 void main() async {
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-  }
+
 
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(MessageAdapter()); // Register adapter
+  await Hive.openBox<Message>('messages'); // Open Hive box
   final chatController = ChatController();
-  await chatController.loadChats();
+//  await chatController.loadChats();
   runApp(
     MultiProvider(
       providers: [

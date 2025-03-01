@@ -30,6 +30,7 @@ class _ChatscreenState extends State<Chatscreen> {
   }
 
   void _loadMessages() {
+    messages = context.read<ChatController>().getMessages();
     if (widget.chat.conversations != null) {
       for (var conversation in widget.chat.conversations!) {
         if (conversation.sentMessageTime != null) {
@@ -53,22 +54,27 @@ class _ChatscreenState extends State<Chatscreen> {
   }
 
   void _sendMessage(ChatController chatController) {
-    final text = chatController.textController.text.trim();
-    if (text.isNotEmpty) {
-      setState(() {
-        messages.add(Message(
-          text: text,
-          time: DateTime.now(),
-          isSent: true,
-        ));
-        chatController.clearText();
-      });
+  final text = chatController.textController.text.trim();
+  if (text.isNotEmpty) {
+    final message = Message(
+      text: text,
+      time: DateTime.now(),
+      isSent: true,
+    );
 
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _scrollToBottom();
-      });
-    }
+    setState(() {
+      messages.add(message);
+    });
+
+    chatController.addMessage(message);
+    chatController.clearText();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+    });
   }
+}
+
 
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
@@ -90,7 +96,7 @@ class _ChatscreenState extends State<Chatscreen> {
           children: [
             Stack(
               children: [
-                 CircleAvatar(
+                CircleAvatar(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(30),
                     child: Image.asset(
@@ -99,17 +105,18 @@ class _ChatscreenState extends State<Chatscreen> {
                     ),
                   ),
                 ),
-                 if (widget.chat.status!) Positioned(
-                  bottom: 0,
-                  right: 0,
-                  child: CircleAvatar(
-                    radius: 7,
+                if (widget.chat.status!)
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
                     child: CircleAvatar(
-                      backgroundColor:   Colors.green[400]  ,
-                      radius: 5,
+                      radius: 7,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.green[400],
+                        radius: 5,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
             Padding(
@@ -154,12 +161,12 @@ class _ChatscreenState extends State<Chatscreen> {
                 ],
               ),
             ),
-            
           ],
         ),
         flexibleSpace: Center(
-          child: Row(children: [
-            const Spacer(),
+          child: Row(
+            children: [
+              const Spacer(),
               IconButton(onPressed: () {}, icon: const Icon(Icons.call)),
               IconButton(onPressed: () {}, icon: const Icon(Icons.videocam)),
               IconButton(
@@ -173,7 +180,8 @@ class _ChatscreenState extends State<Chatscreen> {
                     );
                   },
                   icon: const Icon(Icons.info_rounded)),
-          ],),
+            ],
+          ),
         ),
       ),
       body: ListView(
@@ -222,8 +230,8 @@ class _ChatscreenState extends State<Chatscreen> {
               height: 25,
               width: 100,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.grey[900]),
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.grey[900]),
               child: Center(
                 child: Text(
                   "View Profile",
@@ -239,7 +247,8 @@ class _ChatscreenState extends State<Chatscreen> {
           ),
           const SizedBox(height: 180),
           ...messages
-              .map((message) => MessageBubble(chat : widget.chat!,message: message))
+              .map((message) =>
+                  MessageBubble(chat: widget.chat!, message: message))
               .toList(),
         ],
       ),
@@ -279,7 +288,7 @@ class _ChatscreenState extends State<Chatscreen> {
                 ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical:10.0),
+                  padding: const EdgeInsets.symmetric(vertical: 10.0),
                   child: TextField(
                     controller: chatController.textController,
                     decoration: InputDecoration(
@@ -299,7 +308,8 @@ class _ChatscreenState extends State<Chatscreen> {
                               return DraggableScrollableSheet(
                                 initialChildSize:
                                     0.5, // Initial size (50% of the screen)
-                                minChildSize: 0.25, // Minimum size when collapsed
+                                minChildSize:
+                                    0.25, // Minimum size when collapsed
                                 maxChildSize:
                                     0.9, // Maximum size (90% of the screen)
                                 builder: (context, scrollController) {

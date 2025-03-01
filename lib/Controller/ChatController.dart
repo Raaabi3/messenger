@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
-import '../Models/Chat.dart';
-import '../Models/DatabaseHelper.dart';
+import 'package:hive/hive.dart';
+import '../Models/Helpers/Message.dart';
 
 class ChatController with ChangeNotifier {
   final TextEditingController textController = TextEditingController();
   bool typing = false;
 
-  final DatabaseHelper _databaseHelper = DatabaseHelper();
+  final Box<Message> _messageBox = Hive.box<Message>('messages');
 
-  List<Chat> chats = [];
-
-  Future<void> loadChats() async {
-    chats = await _databaseHelper.loadChats();
+  void addMessage(Message message) {
+    _messageBox.add(message);
     notifyListeners();
   }
 
-  Future<void> addChat(Chat chat) async {
-    await _databaseHelper.saveChat(chat);
-    chats.add(chat);
-    notifyListeners();
+  List<Message> getMessages() {
+    return _messageBox.values.toList();
   }
 
   void setTyping(bool isTyping) {
