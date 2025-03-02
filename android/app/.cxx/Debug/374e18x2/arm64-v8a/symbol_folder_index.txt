@@ -1,0 +1,1 @@
+C:\Users\Administrator\Documents\My Flutter Projects\messenger\build\app\intermediates\cxx\Debug\374e18x2\obj\arm64-v8a

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:messenger/Views/ChatProfileScreen.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import '../Controller/ChatController.dart';
 import '../Models/Chat.dart';
 import '../Models/Helpers/Message.dart';
+import '../Widgets/AutoReplyDialog.dart';
 import '../Widgets/MessageBubble.dart';
 
 class Chatscreen extends StatefulWidget {
@@ -30,51 +32,32 @@ class _ChatscreenState extends State<Chatscreen> {
   }
 
   void _loadMessages() {
-    messages = context.read<ChatController>().getMessages();
-    if (widget.chat.conversations != null) {
-      for (var conversation in widget.chat.conversations!) {
-        if (conversation.sentMessageTime != null) {
-          messages.add(Message(
-            text: conversation.sentMessage!,
-            time: conversation.sentMessageTime!,
-            isSent: true,
-          ));
-        }
-        if (conversation.receivedMessageTime != null) {
-          messages.add(Message(
-            text: conversation.receivedMessage!,
-            time: conversation.receivedMessageTime!,
-            isSent: false,
-          ));
-        }
-      }
-    }
-
+    messages =
+        context.read<ChatController>().getMessages(widget.chat.username!);
     messages.sort((a, b) => a.time.compareTo(b.time));
+    setState(() {}); // Ensure UI updates
   }
 
   void _sendMessage(ChatController chatController) {
-  final text = chatController.textController.text.trim();
-  if (text.isNotEmpty) {
-    final message = Message(
-      text: text,
-      time: DateTime.now(),
-      isSent: true,
-    );
+    final text = chatController.textController.text.trim();
+    if (text.isNotEmpty) {
+      final message = Message(
+        text: text,
+        time: DateTime.now(),
+        isSent: true,
+      );
 
-    setState(() {
-      messages.add(message);
-    });
+      setState(() {
+        messages.add(message);
+      });
 
-    chatController.addMessage(message);
-    chatController.clearText();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollToBottom();
-    });
+      chatController.addMessage(widget.chat.username!, message);
+      chatController.clearText();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottom();
+      });
+    }
   }
-}
-
 
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
@@ -289,76 +272,86 @@ class _ChatscreenState extends State<Chatscreen> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: TextField(
-                    controller: chatController.textController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide.none,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      suffixIcon: IconButton(
-                        onPressed: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled:
-                                true, // Allows the sheet to expand and push content up
-                            backgroundColor: Colors
-                                .transparent, // Optional: For a transparent background
-                            builder: (context) {
-                              return DraggableScrollableSheet(
-                                initialChildSize:
-                                    0.5, // Initial size (50% of the screen)
-                                minChildSize:
-                                    0.25, // Minimum size when collapsed
-                                maxChildSize:
-                                    0.9, // Maximum size (90% of the screen)
-                                builder: (context, scrollController) {
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(16)),
-                                    ),
-                                    child: ListView(
-                                      controller: scrollController,
-                                      children: [
-                                        Center(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(16.0),
-                                            child: Text("Drag me up!"),
+                  child: GestureDetector(
+                    onDoubleTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => Container(
+                          child: AutoReplyDialog(chatController: chatController)),
+                      );
+                    },
+                    child: TextField(
+                      controller: chatController.textController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                              context: context,
+                              isScrollControlled:
+                                  true, // Allows the sheet to expand and push content up
+                              backgroundColor: Colors
+                                  .transparent, // Optional: For a transparent background
+                              builder: (context) {
+                                return DraggableScrollableSheet(
+                                  initialChildSize:
+                                      0.5, // Initial size (50% of the screen)
+                                  minChildSize:
+                                      0.25, // Minimum size when collapsed
+                                  maxChildSize:
+                                      0.9, // Maximum size (90% of the screen)
+                                  builder: (context, scrollController) {
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(16)),
+                                      ),
+                                      child: ListView(
+                                        controller: scrollController,
+                                        children: [
+                                          Center(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(16.0),
+                                              child: Text("Drag me up!"),
+                                            ),
                                           ),
-                                        ),
-                                        // Add more widgets here
-                                      ],
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        },
-                        icon: const Icon(Icons.emoji_emotions),
+                                          // Add more widgets here
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          icon: const Icon(Icons.emoji_emotions),
+                        ),
+                        hintText: 'Message',
+                        hintStyle: const TextStyle(
+                          color: Colors.grey,
+                          fontFamily: "SfProDisplay",
+                        ),
+                        filled: true,
                       ),
-                      hintText: 'Message',
-                      hintStyle: const TextStyle(
-                        color: Colors.grey,
-                        fontFamily: "SfProDisplay",
-                      ),
-                      filled: true,
-                    ),
-                    onChanged: (text) {
-                      if (text.isEmpty) {
-                        chatController.setTyping(false);
-                      } else {
+                      onChanged: (text) {
+                        if (text.isEmpty) {
+                          chatController.setTyping(false);
+                        } else {
+                          chatController.setTyping(true);
+                        }
+                      },
+                      onTap: () {
                         chatController.setTyping(true);
-                      }
-                    },
-                    onTap: () {
-                      chatController.setTyping(true);
-                    },
-                    onSubmitted: (text) {
-                      _sendMessage(chatController);
-                      chatController.setTyping(false);
-                    },
+                      },
+                      onSubmitted: (text) {
+                        _sendMessage(chatController);
+                        chatController.setTyping(false);
+                      },
+                    ),
                   ),
                 ),
               ),
