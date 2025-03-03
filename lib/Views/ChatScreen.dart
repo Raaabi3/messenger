@@ -21,21 +21,21 @@ class Chatscreen extends StatefulWidget {
 class _ChatscreenState extends State<Chatscreen> {
   List<Message> messages = [];
   final ScrollController _scrollController = ScrollController();
+  int _prevMessageCount = 0; // Track previous message count
+
 
   @override
   void initState() {
     super.initState();
-    _loadMessages();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToBottom();
     });
   }
 
-  void _loadMessages() {
-    messages =
-        context.read<ChatController>().getMessages(widget.chat.username!);
+  List<Message> _loadMessages(ChatController chatController) {
+    final messages = chatController.getMessages(widget.chat.username!);
     messages.sort((a, b) => a.time.compareTo(b.time));
-    setState(() {}); // Ensure UI updates
+    return messages;
   }
 
   void _sendMessage(ChatController chatController) {
@@ -47,12 +47,14 @@ class _ChatscreenState extends State<Chatscreen> {
         isSent: true,
       );
 
-      setState(() {
-        messages.add(message);
-      });
-
+      // Add the user's message
       chatController.addMessage(widget.chat.username!, message);
       chatController.clearText();
+
+      // Handle auto-reply logic
+      chatController.handleIncomingMessage(text, widget.chat.username!);
+
+      // Reload messages and update UI
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToBottom();
       });
@@ -167,73 +169,86 @@ class _ChatscreenState extends State<Chatscreen> {
           ),
         ),
       ),
-      body: ListView(
-        controller: _scrollController,
-        children: [
-          CircleAvatar(
-            radius: 50,
-            backgroundColor: Colors.grey,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(50),
-              child: Image.asset(
-                widget.chat.image!,
-                fit: BoxFit.fill,
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            widget.chat.username.toString(),
-            style: const TextStyle(
-              fontFamily: "SfProDisplay",
-              fontWeight: FontWeight.bold,
-              fontSize: 22,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 5),
-          const Text(
-            "You're friends on Facebook",
-            style: TextStyle(
-              fontFamily: "SfProDisplay",
-            ),
-            textAlign: TextAlign.center,
-          ),
-          Text(
-            "Lives in Tunis, Tunisia",
-            style: TextStyle(
-              color: Colors.grey,
-              fontFamily: "SfProDisplay",
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 10),
-          Center(
-            child: Container(
-              height: 25,
-              width: 100,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  color: Colors.grey[900]),
-              child: Center(
-                child: Text(
-                  "View Profile",
-                  style: TextStyle(
-                    fontFamily: "SfProDisplay",
-                    fontSize: 12,
-                    color: Colors.grey[300],
+      body: Consumer<ChatController>(
+        builder: (context, chatController, child) {
+          final messages = _loadMessages(chatController); // Load messages
+          if (messages.length > _prevMessageCount) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _scrollToBottom();
+            });
+            _prevMessageCount = messages.length;
+          }
+          return ListView(
+            controller: _scrollController,
+            children: [
+              // Chat header content...
+              CircleAvatar(
+                radius: 50,
+                backgroundColor: Colors.grey,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child: Image.asset(
+                    widget.chat.image!,
+                    fit: BoxFit.fill,
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ),
-            ),
-          ),
-          const SizedBox(height: 180),
-          ...messages
-              .map((message) =>
-                  MessageBubble(chat: widget.chat!, message: message))
-              .toList(),
-        ],
+              const SizedBox(height: 10),
+              Text(
+                widget.chat.username.toString(),
+                style: const TextStyle(
+                  fontFamily: "SfProDisplay",
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 5),
+              const Text(
+                "You're friends on Facebook",
+                style: TextStyle(
+                  fontFamily: "SfProDisplay",
+                ),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                "Lives in Tunis, Tunisia",
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontFamily: "SfProDisplay",
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              Center(
+                child: Container(
+                  height: 25,
+                  width: 100,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.grey[900],
+                  ),
+                  child: Center(
+                    child: Text(
+                      "View Profile",
+                      style: TextStyle(
+                        fontFamily: "SfProDisplay",
+                        fontSize: 12,
+                        color: Colors.grey[300],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 180),
+              ...messages
+                  .map((message) =>
+                      MessageBubble(chat: widget.chat, message: message))
+                  .toList(),
+            ],
+          );
+        },
       ),
       bottomNavigationBar: Consumer<ChatController>(
         builder: (context, chatController, child) {
@@ -276,8 +291,8 @@ class _ChatscreenState extends State<Chatscreen> {
                     onDoubleTap: () {
                       showDialog(
                         context: context,
-                        builder: (context) => Container(
-                          child: AutoReplyDialog(chatController: chatController)),
+                        builder: (context) =>
+                            AutoReplyDialog(chatController: chatController),
                       );
                     },
                     child: TextField(
@@ -291,18 +306,13 @@ class _ChatscreenState extends State<Chatscreen> {
                           onPressed: () {
                             showModalBottomSheet(
                               context: context,
-                              isScrollControlled:
-                                  true, // Allows the sheet to expand and push content up
-                              backgroundColor: Colors
-                                  .transparent, // Optional: For a transparent background
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
                               builder: (context) {
                                 return DraggableScrollableSheet(
-                                  initialChildSize:
-                                      0.5, // Initial size (50% of the screen)
-                                  minChildSize:
-                                      0.25, // Minimum size when collapsed
-                                  maxChildSize:
-                                      0.9, // Maximum size (90% of the screen)
+                                  initialChildSize: 0.5,
+                                  minChildSize: 0.25,
+                                  maxChildSize: 0.9,
                                   builder: (context, scrollController) {
                                     return Container(
                                       decoration: BoxDecoration(
@@ -319,7 +329,6 @@ class _ChatscreenState extends State<Chatscreen> {
                                               child: Text("Drag me up!"),
                                             ),
                                           ),
-                                          // Add more widgets here
                                         ],
                                       ),
                                     );

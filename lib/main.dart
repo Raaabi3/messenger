@@ -8,13 +8,21 @@ import 'Controller/ChatController.dart';
 import 'Controller/ThemeProvider.dart';
 import 'Models/Chat.dart';
 import 'Models/ChatMessage.dart';
+import 'adapters/DurationAdapter.dart';
 import 'Models/Helpers/Message.dart';
 import 'Models/RuleModel.dart';
+import 'adapters/TimeOfDay.dart';
+
+void registerAdapters() {
+  Hive.registerAdapter(DurationAdapter());
+  Hive.registerAdapter(TimeOfDayAdapter());
+  Hive.registerAdapter(RuleModelAdapter());
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
-
+  registerAdapters();
   // Register Adapters for Hive (only if not already registered)
   if (!Hive.isAdapterRegistered(MessageAdapter().typeId)) {
     Hive.registerAdapter(MessageAdapter());
@@ -25,12 +33,6 @@ void main() async {
   if (!Hive.isAdapterRegistered(ChatMessageAdapter().typeId)) {
     Hive.registerAdapter(ChatMessageAdapter());
   }
-  
-    if (!Hive.isAdapterRegistered(RuleModelAdapter().typeId)) {
-    Hive.registerAdapter(RuleModelAdapter()); 
-    print('RuleAdapter registered');
-  }
-  
 
   // Open Hive Boxes only if not already open
   if (!Hive.isBoxOpen('messages')) {
@@ -39,12 +41,14 @@ void main() async {
   if (!Hive.isBoxOpen('chats')) {
     await Hive.openBox<Chat>('chats'); // Store chat history
   }
-   if (!Hive.isBoxOpen('rules')) {
-    await Hive.openBox<RuleModel>('rule_model_box'); // Store rules
+  if (!Hive.isBoxOpen('rule_model_box')) {
+    await Hive.openBox<RuleModel>(
+        'rule_model_box'); // Use the same name everywhere
   }
 
   final chatController = ChatController();
-  chatController.loadChats(); // No need for `await` since `loadChats` is now synchronous
+  chatController
+      .loadChats(); // No need for `await` since `loadChats` is now synchronous
 
   runApp(
     MultiProvider(
@@ -72,6 +76,13 @@ class MyApp extends StatelessWidget {
             primaryColor: Colors.blueGrey,
             scaffoldBackgroundColor: Colors.black,
             appBarTheme: AppBarTheme(backgroundColor: Colors.black),
+            dialogTheme: DialogTheme(
+              backgroundColor: Colors.grey[800],
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey,
+                    textStyle: TextStyle(color: Colors.white))),
             switchTheme: SwitchThemeData(
               thumbColor: MaterialStateProperty.all(Colors.white),
               trackColor: MaterialStateProperty.all(Colors.grey),
