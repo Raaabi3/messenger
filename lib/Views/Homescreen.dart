@@ -509,7 +509,7 @@ class _HomescreenState extends State<Homescreen> {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => Chatscreen(
-                                          chat: homeController.chats[index],
+                                          chat: homeController.chats[index], controller: homeController, chatIndex: index,
                                         )),
                               );
                             },
@@ -587,7 +587,7 @@ class _HomescreenState extends State<Homescreen> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Chatscreen(
-                                        chat: homeController.chats[index],
+                                        chat: homeController.chats[index], controller: homeController, chatIndex: index,
                                       )),
                             );
                           },

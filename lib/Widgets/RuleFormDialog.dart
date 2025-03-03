@@ -27,7 +27,8 @@ class _RuleFormDialogState extends State<RuleFormDialog> {
   late String _selectedAction;
   late bool _enableDelay;
   late bool _enableSpecificTime; // New checkbox for specific time
-  DateTime? _selectedDateTime; // Store the selected date and time
+  Duration? _selectedDelay; // Selected fixed delay (e.g., 10 seconds, 30 seconds)
+  TimeOfDay? _selectedTime; // Store the selected time (hour and minute)
 
   @override
   void initState() {
@@ -41,9 +42,13 @@ class _RuleFormDialogState extends State<RuleFormDialog> {
     _selectedAction = widget.rule.actionType;
     _enableDelay = widget.rule.enableDelay;
     _enableSpecificTime = widget.rule.delayDuration != null; // Initialize
-    _selectedDateTime = widget.rule.delayDuration != null
-        ? DateTime.now().add(widget.rule.delayDuration!)
-        : null; // Initialize
+    _selectedDelay = widget.rule.delayDuration; // Initialize fixed delay
+    _selectedTime = widget.rule.delayDuration != null
+        ? TimeOfDay(
+            hour: widget.rule.delayDuration!.inHours,
+            minute: widget.rule.delayDuration!.inMinutes.remainder(60),
+          )
+        : null; // Initialize specific time
   }
 
   @override
@@ -54,30 +59,16 @@ class _RuleFormDialogState extends State<RuleFormDialog> {
     super.dispose();
   }
 
-  Future<void> _pickDateTime(BuildContext context) async {
-    final date = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(DateTime.now().year + 1),
-    );
-    if (date == null) return; // User canceled date picker
-
+  Future<void> _pickTime(BuildContext context) async {
     final time = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.now(),
+      initialTime: _selectedTime ?? TimeOfDay.now(),
     );
-    if (time == null) return; // User canceled time picker
-
-    setState(() {
-      _selectedDateTime = DateTime(
-        date.year,
-        date.month,
-        date.day,
-        time.hour,
-        time.minute,
-      );
-    });
+    if (time != null) {
+      setState(() {
+        _selectedTime = time;
+      });
+    }
   }
 
   @override
@@ -187,6 +178,9 @@ class _RuleFormDialogState extends State<RuleFormDialog> {
                       onChanged: (value) {
                         setState(() {
                           _enableDelay = value!;
+                          if (!_enableDelay) {
+                            _enableSpecificTime = false; // Disable specific time if delay is disabled
+                          }
                         });
                       },
                     ),
@@ -195,34 +189,85 @@ class _RuleFormDialogState extends State<RuleFormDialog> {
                 ),
                 if (_enableDelay) ...[
                   const SizedBox(height: 10),
-                  Row(
+                  Column(
                     children: [
-                      Checkbox(
-                        value: _enableSpecificTime,
+                      RadioListTile<Duration>(
+                        title: const Text('10 seconds'),
+                        value: const Duration(seconds: 10),
+                        groupValue: _selectedDelay,
                         onChanged: (value) {
                           setState(() {
-                            _enableSpecificTime = value!;
+                            _selectedDelay = value;
+                            _enableSpecificTime = false; // Disable specific time if a fixed delay is selected
                           });
                         },
                       ),
-                      const Text('Enable Specific Time'),
+                      RadioListTile<Duration>(
+                        title: const Text('30 seconds'),
+                        value: const Duration(seconds: 30),
+                        groupValue: _selectedDelay,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedDelay = value;
+                            _enableSpecificTime = false; // Disable specific time if a fixed delay is selected
+                          });
+                        },
+                      ),
+                      RadioListTile<Duration>(
+                        title: const Text('1 minute'),
+                        value: const Duration(minutes: 1),
+                        groupValue: _selectedDelay,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedDelay = value;
+                            _enableSpecificTime = false; // Disable specific time if a fixed delay is selected
+                          });
+                        },
+                      ),
+                      RadioListTile<Duration>(
+                        title: const Text('5 minutes'),
+                        value: const Duration(minutes: 5),
+                        groupValue: _selectedDelay,
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedDelay = value;
+                            _enableSpecificTime = false; // Disable specific time if a fixed delay is selected
+                          });
+                        },
+                      ),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: _enableSpecificTime,
+                            onChanged: (value) {
+                              setState(() {
+                                _enableSpecificTime = value!;
+                                if (_enableSpecificTime) {
+                                  _selectedDelay = null; // Clear fixed delay if specific time is enabled
+                                }
+                              });
+                            },
+                          ),
+                          const Text('Enable Specific Time'),
+                        ],
+                      ),
+                      if (_enableSpecificTime) ...[
+                        const SizedBox(height: 10),
+                        ListTile(
+                          title: const Text('Select Time'),
+                          subtitle: Text(
+                            _selectedTime != null
+                                ? '${_selectedTime!.hour}:${_selectedTime!.minute}'
+                                : 'Not set',
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.timer),
+                            onPressed: () => _pickTime(context),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
-                  if (_enableSpecificTime) ...[
-                    const SizedBox(height: 10),
-                    ListTile(
-                      title: const Text('Select Date and Time'),
-                      subtitle: Text(
-                        _selectedDateTime != null
-                            ? '${_selectedDateTime!.toLocal()}'
-                            : 'Not set',
-                      ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.timer),
-                        onPressed: () => _pickDateTime(context),
-                      ),
-                    ),
-                  ],
                 ],
               ],
               const SizedBox(height: 20),
@@ -240,9 +285,12 @@ class _RuleFormDialogState extends State<RuleFormDialog> {
                         actionType: _selectedAction,
                         replyMessage: _replyMessageController.text,
                         enableDelay: _enableDelay,
-                        delayDuration: _enableSpecificTime && _selectedDateTime != null
-                            ? _selectedDateTime!.difference(DateTime.now())
-                            : null,
+                        delayDuration: _enableSpecificTime && _selectedTime != null
+                            ? Duration(
+                                hours: _selectedTime!.hour,
+                                minutes: _selectedTime!.minute,
+                              )
+                            : _selectedDelay, // Use fixed delay or specific time
                       ));
                       widget.onRuleUpdated(); // Notify parent to rebuild
                       Navigator.pop(context);

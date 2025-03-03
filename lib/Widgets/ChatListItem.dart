@@ -2,15 +2,30 @@ import 'package:flutter/material.dart';
 import '../Controller/HomeController.dart';
 import '../Widgets/SendStatus.dart';
 import '../Models/Chat.dart';
+import 'package:provider/provider.dart';
 
 class ChatListItem extends StatelessWidget {
   final Chat chat;
-  final HomescreenController controller = HomescreenController();
 
-  ChatListItem({Key? key, required this.chat}) : super(key: key);
+  const ChatListItem({Key? key, required this.chat}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Access the controller from the provider
+    final controller = Provider.of<HomescreenController>(context, listen: false);
+
+    // Get the latest message text
+    final latestMessageText = chat.conversations != null &&
+            chat.conversations!.isNotEmpty &&
+            chat.conversations!.last.messages.isNotEmpty
+        ? chat.conversations!.last.messages.last.text
+        : "No messages yet";
+
+    // Get the formatted time
+    final formattedTime = chat.time != null
+        ? controller.formatTime(chat.time!)
+        : "Unknown time";
+
     return ListTile(
       leading: Stack(
         children: [
@@ -32,11 +47,10 @@ class ChatListItem extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      border: Border.all( width:2),
-                      color: const Color.fromARGB(255, 35, 65, 36)
-                    ),
+                      border: Border.all(width: 2),
+                      color: const Color.fromARGB(255, 35, 65, 36)),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal:  2.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 2.0),
                       child: Text(
                         "${DateTime.now().difference(chat.lastSeenTime!).inMinutes.toString()}m",
                         style: TextStyle(
@@ -62,20 +76,19 @@ class ChatListItem extends StatelessWidget {
       ),
       title: Text(
         chat.username!,
-        style:
-            TextStyle(fontFamily: "SfProDisplay"),
+        style: TextStyle(fontFamily: "SfProDisplay"),
       ),
       subtitle: Row(
         children: [
           Flexible(
             child: Text(
-              "${chat.lastmessage} • ",
+              "$latestMessageText • ",
               style: TextStyle(fontFamily: "SfProDisplay", color: Colors.grey),
               overflow: TextOverflow.ellipsis,
             ),
           ),
           Text(
-            controller.formatTime(chat.time!),
+            formattedTime,
             style: TextStyle(fontFamily: "SfProDisplay", color: Colors.grey),
             overflow: TextOverflow.ellipsis,
           ),

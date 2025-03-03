@@ -67,4 +67,6 @@ class RuleModel {
       conditionTime: conditionTime ?? this.conditionTime,
     );
   }
+
+  
 }

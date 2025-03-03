@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../Models/Chat.dart';
 import 'package:intl/intl.dart';
 
+import '../Models/ChatMessage.dart';
+
 class HomescreenController with ChangeNotifier {
   bool _addconv = false;
   bool get addconv => _addconv;
@@ -23,6 +25,13 @@ class HomescreenController with ChangeNotifier {
   void addChats(List<Chat> newChats) {
     _chats.addAll(newChats);
     notifyListeners();
+  }
+
+  void updateConversation(int chatIndex, ChatMessage newMessage) {
+     if (chatIndex >= 0 && chatIndex < chats.length) {
+      chats[chatIndex].conversations?.add(newMessage);
+      notifyListeners(); 
+    }
   }
 
   String formatTime(DateTime time) {

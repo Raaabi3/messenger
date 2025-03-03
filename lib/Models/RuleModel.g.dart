@@ -23,7 +23,7 @@ class RuleModelAdapter extends TypeAdapter<RuleModel> {
       conditionValue: fields[3] as String,
       actionType: fields[4] as String,
       replyMessage: fields[5] as String,
-      enableDelay: (fields[6] as bool?) ?? false,
+      enableDelay: fields[6] as bool,
       delayDuration: fields[7] as Duration?,
       conditionTime: fields[8] as TimeOfDay?,
     );

@@ -17,25 +17,16 @@ class ChatMessageAdapter extends TypeAdapter<ChatMessage> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ChatMessage(
-      sentMessage: fields[0] as String?,
-      receivedMessage: fields[1] as String?,
-      sentMessageTime: fields[2] as DateTime?,
-      receivedMessageTime: fields[3] as DateTime?,
+      messages: (fields[0] as List).cast<Message>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, ChatMessage obj) {
     writer
-      ..writeByte(4)
-      ..writeByte(0)
-      ..write(obj.sentMessage)
       ..writeByte(1)
-      ..write(obj.receivedMessage)
-      ..writeByte(2)
-      ..write(obj.sentMessageTime)
-      ..writeByte(3)
-      ..write(obj.receivedMessageTime);
+      ..writeByte(0)
+      ..write(obj.messages);
   }
 
   @override

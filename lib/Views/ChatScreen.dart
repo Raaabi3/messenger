@@ -4,15 +4,19 @@ import 'package:messenger/Views/ChatProfileScreen.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import '../Controller/ChatController.dart';
+import '../Controller/HomeController.dart';
 import '../Models/Chat.dart';
+import '../Models/ChatMessage.dart';
 import '../Models/Helpers/Message.dart';
 import '../Widgets/AutoReplyDialog.dart';
 import '../Widgets/MessageBubble.dart';
 
 class Chatscreen extends StatefulWidget {
   final Chat chat;
+  final int chatIndex;
+  final HomescreenController controller;
 
-  const Chatscreen({super.key, required this.chat});
+  const Chatscreen({super.key, required this.chat, required this.controller, required this.chatIndex});
 
   @override
   State<Chatscreen> createState() => _ChatscreenState();
@@ -35,7 +39,9 @@ class _ChatscreenState extends State<Chatscreen> {
   List<Message> _loadMessages(ChatController chatController) {
     final messages = chatController.getMessages(widget.chat.username!);
     messages.sort((a, b) => a.time.compareTo(b.time));
+
     return messages;
+    
   }
 
   void _sendMessage(ChatController chatController) {
@@ -47,9 +53,11 @@ class _ChatscreenState extends State<Chatscreen> {
         isSent: true,
       );
 
+
       // Add the user's message
       chatController.addMessage(widget.chat.username!, message);
       chatController.clearText();
+    widget.controller.updateConversation(widget.chatIndex, ChatMessage(messages:[message]));
 
       // Handle auto-reply logic
       chatController.handleIncomingMessage(text, widget.chat.username!);
@@ -73,7 +81,7 @@ class _ChatscreenState extends State<Chatscreen> {
 
   @override
   Widget build(BuildContext context) {
-    final chatController = Provider.of<ChatController>(context);
+    final chat = widget.controller.chats[widget.chatIndex];
 
     return Scaffold(
       appBar: AppBar(

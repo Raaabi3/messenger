@@ -18,11 +18,18 @@ void registerAdapters() {
   Hive.registerAdapter(TimeOfDayAdapter());
   Hive.registerAdapter(RuleModelAdapter());
 }
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   registerAdapters();
+
+  /*
+  // Delete existing boxes to avoid schema mismatch
+  await Hive.deleteBoxFromDisk('messages');
+  await Hive.deleteBoxFromDisk('chats');
+  await Hive.deleteBoxFromDisk('rule_model_box');
+*/
+
   // Register Adapters for Hive (only if not already registered)
   if (!Hive.isAdapterRegistered(MessageAdapter().typeId)) {
     Hive.registerAdapter(MessageAdapter());
@@ -34,34 +41,26 @@ void main() async {
     Hive.registerAdapter(ChatMessageAdapter());
   }
 
-  // Open Hive Boxes only if not already open
-  if (!Hive.isBoxOpen('messages')) {
-    await Hive.openBox('messages'); // Store messages safely
-  }
-  if (!Hive.isBoxOpen('chats')) {
-    await Hive.openBox<Chat>('chats'); // Store chat history
-  }
-  if (!Hive.isBoxOpen('rule_model_box')) {
-    await Hive.openBox<RuleModel>(
-        'rule_model_box'); // Use the same name everywhere
-  }
-
-  final chatController = ChatController();
-  chatController
-      .loadChats(); // No need for `await` since `loadChats` is now synchronous
+  // Open Hive Boxes
+  await Hive.openBox('messages'); // Store messages safely
+  await Hive.openBox<Chat>('chats'); // Store chat history
+  await Hive.openBox<RuleModel>('rule_model_box'); // Use the same name everywhere
 
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => HomescreenController()),
-        ChangeNotifierProvider(create: (_) => chatController),
+        ChangeNotifierProxyProvider<HomescreenController, ChatController>(
+          create: (_) => ChatController(homescreenController: HomescreenController()), // Temporary dummy controller
+          update: (_, homescreenController, chatController) => 
+              ChatController(homescreenController: homescreenController),
+        ),
       ],
       child: MyApp(),
     ),
   );
 }
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

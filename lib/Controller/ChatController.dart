@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
 import '../Models/Chat.dart';
+import '../Models/ChatMessage.dart';
 import '../Models/Helpers/Message.dart';
 import '../Models/RuleModel.dart';
+import 'HomeController.dart';
 
 class ChatController with ChangeNotifier {
+  final HomescreenController homescreenController; 
   final TextEditingController textController = TextEditingController();
   bool typing = false;
   List<Chat> chats = [];
@@ -26,6 +30,8 @@ class ChatController with ChangeNotifier {
   final Box<Chat> _chatBox = Hive.box<Chat>('chats');
 
   final Box _messageBox = Hive.box('messages');
+
+  ChatController({required this.homescreenController});
 
   void loadChats() {
     chats = _chatBox.values.toList();
@@ -80,7 +86,6 @@ class ChatController with ChangeNotifier {
     notifyListeners();
   }
 
-
   // Delete a rule from Hive
   void deleteRule(String id) {
     _ruleBox.delete(id); // Delete rule from Hive
@@ -109,7 +114,7 @@ class ChatController with ChangeNotifier {
   }
 
   // Check if the message matches the rule's condition
-   bool _matchesRule(String message, RuleModel rule) {
+  bool _matchesRule(String message, RuleModel rule) {
     switch (rule.conditionType) {
       case 'Contains':
         return message.contains(rule.conditionValue);
@@ -144,20 +149,34 @@ class ChatController with ChangeNotifier {
   }
 
   // Apply the rule's action
-void _applyRuleAction(RuleModel rule, String chatId) {
+  void _applyRuleAction(RuleModel rule, String chatId) {
   final replyMessage = rule.replyMessage;
   if (replyMessage.isEmpty) return;
 
   void sendReply() {
-    addMessage(
-      chatId,
-      Message(
-        text: replyMessage,
-        isSent: false,
-        time: DateTime.now().add(rule.delayDuration ?? Duration.zero),
-      ),
+    final message = Message(
+      text: replyMessage,
+      isSent: false,
+      time: DateTime.now().add(rule.delayDuration ?? Duration.zero),
     );
-    notifyListeners(); // Notify listeners to rebuild the UI
+
+    // Add the message to Hive
+    addMessage(chatId, message);
+
+    // Find the chat index in HomescreenController
+    final chatIndex = homescreenController.chats.indexWhere(
+      (chat) => chat.username == chatId,
+    );
+
+    if (chatIndex != -1) {
+      // Update the conversation in HomescreenController
+      homescreenController.updateConversation(
+        chatIndex,
+        ChatMessage(messages: [message]),
+      );
+    }
+
+    notifyListeners();
   }
 
   if (rule.enableDelay && rule.delayDuration != null) {

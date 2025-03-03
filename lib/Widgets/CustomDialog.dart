@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'dart:io';
 import '../Models/Chat.dart';
 import '../Models/ChatMessage.dart';
+import '../Models/Helpers/Message.dart'; // Import the Message model
 import '../Controller/HomeController.dart';
 
 class CustomDialog extends StatefulWidget {
@@ -148,38 +149,51 @@ class _CustomDialogState extends State<CustomDialog> {
           onPressed: () {
             final homeController =
                 Provider.of<HomescreenController>(context, listen: false);
-            homeController.addChat(
-              Chat(
-                image: _selectedImage != null
-                    ? _selectedImage!.path // Use selected image path
-                    : "assets/images/noAvatar.jpg", // Default image
-                username: usernameController.text.isEmpty
-                    ? 'Zbiba'
-                    : usernameController.text,
-                lastmessage: lastMessageController.text.isEmpty
-                    ? 'Running 15 mins late, traffic is crazy! 🚗'
-                    : lastMessageController.text,
-                lastSeenTime: DateTime.now().subtract(Duration(minutes: 15)),
-                status: isOnline,
-                received: isDelivered,
-                read: isRead,
-                time: selectedTime,
-                conversations: [
-                  ChatMessage(
-                    sentMessage: sentMessageController.text.isEmpty
-                        ? "Hey Sarah, are you on your way?"
-                        : sentMessageController.text,
-                    sentMessageTime:
-                        DateTime.now().subtract(Duration(minutes: 30)),
-                    receivedMessage: receivedMessageController.text.isEmpty
-                        ? "Yes, but I'm stuck in traffic. Running 15 mins late!"
-                        : receivedMessageController.text,
-                    receivedMessageTime:
-                        DateTime.now().subtract(Duration(minutes: 20)),
-                  ),
-                ],
+
+            // Create a list of messages for the conversation
+            final messages = [
+              Message(
+                text: sentMessageController.text.isEmpty
+                    ? "Hello!" // Default sent message
+                    : sentMessageController.text,
+                time: DateTime.now(),
+                isSent: true,
               ),
+              Message(
+                text: receivedMessageController.text.isEmpty
+                    ? "Hi there!" // Default received message
+                    : receivedMessageController.text,
+                time: DateTime.now(),
+                isSent: false,
+              ),
+            ];
+
+            // Create a ChatMessage object with the messages
+            final chatMessage = ChatMessage(messages: messages);
+
+            // Create a Chat object with the ChatMessage
+            final chat = Chat(
+              image: _selectedImage != null
+                  ? _selectedImage!.path // Use selected image path
+                  : "assets/images/noAvatar.jpg", // Default image
+              username: usernameController.text.isEmpty
+                  ? 'Zbiba'
+                  : usernameController.text,
+              lastmessage: lastMessageController.text.isEmpty
+                  ? 'Running 15 mins late, traffic is crazy! 🚗'
+                  : lastMessageController.text,
+              lastSeenTime: DateTime.now().subtract(Duration(minutes: 15)),
+              status: isOnline,
+              received: isDelivered,
+              read: isRead,
+              time: selectedTime,
+              conversations: [chatMessage], // Add the ChatMessage to the conversation
             );
+
+            // Add the chat to the home controller
+            homeController.addChat(chat);
+
+            // Close the dialog
             Navigator.of(context).pop();
           },
           child: Text(
