@@ -12,7 +12,7 @@ class ChatListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Access the controller from the provider
-    final controller = Provider.of<HomescreenController>(context, listen: false);
+    final controller = Provider.of<HomescreenController>(context);
 
     // Get the latest message text
     final latestMessageText = chat.conversations != null &&

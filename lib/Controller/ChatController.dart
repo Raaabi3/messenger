@@ -8,7 +8,7 @@ import '../Models/RuleModel.dart';
 import 'HomeController.dart';
 
 class ChatController with ChangeNotifier {
-  final HomescreenController homescreenController; 
+  final HomescreenController homescreenController;
   final TextEditingController textController = TextEditingController();
   bool typing = false;
   List<Chat> chats = [];
@@ -31,7 +31,10 @@ class ChatController with ChangeNotifier {
 
   final Box _messageBox = Hive.box('messages');
 
-  ChatController({required this.homescreenController});
+  ChatController({required this.homescreenController}){
+      homescreenController.loadChats(); // Ensure chats are loaded
+
+  }
 
   void loadChats() {
     chats = _chatBox.values.toList();
@@ -45,8 +48,7 @@ class ChatController with ChangeNotifier {
 
   void addMessage(String chatId, Message message) {
     List<Message> chatMessages =
-        (_messageBox.get(chatId, defaultValue: []) as List)
-            .cast<Message>(); 
+        (_messageBox.get(chatId, defaultValue: []) as List).cast<Message>();
     chatMessages.add(message);
     _messageBox.put(chatId, chatMessages);
     notifyListeners();
@@ -150,39 +152,45 @@ class ChatController with ChangeNotifier {
 
   // Apply the rule's action
   void _applyRuleAction(RuleModel rule, String chatId) {
-  final replyMessage = rule.replyMessage;
-  if (replyMessage.isEmpty) return;
+    final replyMessage = rule.replyMessage;
+    if (replyMessage.isEmpty) return;
 
-  void sendReply() {
-    final message = Message(
-      text: replyMessage,
-      isSent: false,
-      time: DateTime.now().add(rule.delayDuration ?? Duration.zero),
-    );
-
-    // Add the message to Hive
-    addMessage(chatId, message);
-
-    // Find the chat index in HomescreenController
-    final chatIndex = homescreenController.chats.indexWhere(
-      (chat) => chat.username == chatId,
-    );
-
-    if (chatIndex != -1) {
-      // Update the conversation in HomescreenController
-      homescreenController.updateConversation(
-        chatIndex,
-        ChatMessage(messages: [message]),
+    void sendReply() {
+      final message = Message(
+        text: replyMessage,
+        isSent: false,
+        time: DateTime.now().add(rule.delayDuration ?? Duration.zero),
       );
+
+      // Add the message to Hive
+      addMessage(chatId, message);
+      // Find the chat index in HomescreenController
+      final chatIndex = homescreenController.chats.indexWhere(
+  (chat) => chat.username?.trim() == chatId.trim(),
+);
+
+      print("Total chats available: ${homescreenController.chats.length}");
+
+      for (var chat in homescreenController.chats) {
+        print("Existing chat username: '${chat.username}'");
+      }
+      print("chat number" + chatIndex.toString() + "username " + chatId);
+
+      if (chatIndex != -1) {
+        // Update the conversation in HomescreenController
+        homescreenController.updateConversation(
+          chatIndex,
+          ChatMessage(messages: [message]),
+        );
+      }
+
+      notifyListeners();
     }
 
-    notifyListeners();
+    if (rule.enableDelay && rule.delayDuration != null) {
+      Future.delayed(rule.delayDuration!, sendReply);
+    } else {
+      sendReply();
+    }
   }
-
-  if (rule.enableDelay && rule.delayDuration != null) {
-    Future.delayed(rule.delayDuration!, sendReply);
-  } else {
-    sendReply();
-  }
-}
 }

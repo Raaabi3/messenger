@@ -23,12 +23,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   registerAdapters();
-
+/*
   // Delete existing boxes to avoid schema mismatch
   await Hive.deleteBoxFromDisk('messages');
   await Hive.deleteBoxFromDisk('chats');
   await Hive.deleteBoxFromDisk('rule_model_box');
-
+*/
   // Register Adapters for Hive (only if not already registered)
   if (!Hive.isAdapterRegistered(MessageAdapter().typeId)) {
     Hive.registerAdapter(MessageAdapter());
