@@ -46,7 +46,7 @@ class ChatController with ChangeNotifier {
   void addMessage(String chatId, Message message) {
     List<Message> chatMessages =
         (_messageBox.get(chatId, defaultValue: []) as List)
-            .cast<Message>(); // Ensure correct type casting
+            .cast<Message>(); 
     chatMessages.add(message);
     _messageBox.put(chatId, chatMessages);
     notifyListeners();
